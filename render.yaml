@@ -1,0 +1,31 @@
+# Render Blueprint: c2r-mainPage-backend (Connect2Roots Admin API)
+# Repo: https://github.com/Krish2728/c2r-mainPage-backend
+#
+# Deploy: Connect this repo in Render; set CORS_ORIGIN to your frontend URL (e.g. https://c2r-mainpage.onrender.com).
+# Default admin after first deploy: admin@connect2roots.org / admin123
+
+services:
+  - type: web
+    name: c2r-admin-backend
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: node index.js
+    releaseCommand: npm run init-db
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: c2r-admin-db
+          property: connectionString
+
+databases:
+  - name: c2r-admin-db
+    region: oregon
+    plan: free

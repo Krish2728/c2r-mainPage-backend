@@ -5,9 +5,15 @@ const path = require("path");
 const expressConfig = (app) => {
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
+	const allowedOrigins = process.env.CORS_ORIGIN
+		? process.env.CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean)
+		: ["http://localhost:3000", "http://localhost:5173"];
 	app.use(
 		cors({
-			origin: ["http://localhost:3000", "http://localhost:5173"],
+			origin: (origin, cb) => {
+				if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+				cb(null, false);
+			},
 			methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
 			allowedHeaders: ["Content-Type", "Authorization", "Accept"],
 			credentials: true,
