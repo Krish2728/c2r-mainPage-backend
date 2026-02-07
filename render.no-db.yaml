@@ -1,0 +1,22 @@
+# Fallback Blueprint: use this if the main render.yaml fails (e.g. database link issue).
+# 1. Rename this file to render.yaml (or use "Custom path" in Render to point to it).
+# 2. In Render Dashboard: New + > PostgreSQL — create a DB, copy its Internal Database URL.
+# 3. In the web service Environment, add DATABASE_URL = that URL, and set CORS_ORIGIN.
+
+services:
+  - type: web
+    name: c2r-admin-backend
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run init-db && node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false
+      - key: DATABASE_URL
+        sync: false

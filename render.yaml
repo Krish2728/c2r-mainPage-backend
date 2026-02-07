@@ -11,8 +11,7 @@ services:
     region: oregon
     plan: free
     buildCommand: npm install
-    startCommand: node index.js
-    releaseCommand: npm run init-db
+    startCommand: npm run init-db && node index.js
     envVars:
       - key: NODE_ENV
         value: production

@@ -2,6 +2,11 @@
 
 Backend repo: [Krish2728/c2r-mainPage-backend](https://github.com/Krish2728/c2r-mainPage-backend)
 
+## If Blueprint reports "there was an issue"
+
+- The main `render.yaml` was updated: **releaseCommand** was removed (not a valid Blueprint field) and DB init runs in the start command instead.
+- If you still see an error (e.g. about the database link), use **Option B** below (manual Web Service + PostgreSQL) or the fallback file **render.no-db.yaml**: copy it to `render.yaml`, then create a PostgreSQL instance in the Dashboard and set **DATABASE_URL** in the service Environment.
+
 ## Option A: Blueprint (recommended)
 
 1. Go to [Render Dashboard](https://dashboard.render.com) → **New +** → **Blueprint**.
