@@ -5,8 +5,9 @@ const path = require("path");
 const expressConfig = (app) => {
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
-	const allowedOrigins = process.env.CORS_ORIGIN
-		? process.env.CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean)
+	const corsOrigin = (process.env.CORS_ORIGIN || "").trim();
+	const allowedOrigins = corsOrigin
+		? corsOrigin.split(",").map((o) => o.trim()).filter(Boolean)
 		: ["http://localhost:3000", "http://localhost:5173"];
 	app.use(
 		cors({

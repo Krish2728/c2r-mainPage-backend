@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const ExcelJS = require("exceljs");
 const { query } = require("../config/db");
 
 const loginAdmin = async (req, res) => {
@@ -64,6 +65,65 @@ const getEmails = async (req, res) => {
 	}
 };
 
+const exportEmails = async (req, res) => {
+	try {
+		const result = await query(
+			`SELECT id, type, name, email, message, company_name, contact_person,
+			        profession, experience, motivation, created_at
+			 FROM contact_submissions
+			 ORDER BY created_at DESC`
+		);
+		const rows = result.rows || [];
+
+		const workbook = new ExcelJS.Workbook();
+		workbook.creator = "Connect2Roots Admin";
+		const sheet = workbook.addWorksheet("Emails", { headerRows: 1 });
+
+		sheet.columns = [
+			{ header: "Date", key: "created_at", width: 20 },
+			{ header: "Type", key: "type", width: 14 },
+			{ header: "Name", key: "name", width: 22 },
+			{ header: "Email", key: "email", width: 28 },
+			{ header: "Message", key: "message", width: 40 },
+			{ header: "Company Name", key: "company_name", width: 22 },
+			{ header: "Contact Person", key: "contact_person", width: 18 },
+			{ header: "Profession", key: "profession", width: 16 },
+			{ header: "Experience", key: "experience", width: 25 },
+			{ header: "Motivation", key: "motivation", width: 25 },
+		];
+
+		sheet.getRow(1).font = { bold: true };
+		sheet.getRow(1).fill = {
+			type: "pattern",
+			pattern: "solid",
+			fgColor: { argb: "FFE8F5E0" },
+		};
+
+		rows.forEach((r) => {
+			sheet.addRow({
+				created_at: r.created_at ? new Date(r.created_at).toISOString().replace("T", " ").slice(0, 19) : "",
+				type: r.type || "",
+				name: r.name || "",
+				email: r.email || "",
+				message: (r.message || "").toString().slice(0, 32000),
+				company_name: r.company_name || "",
+				contact_person: r.contact_person || "",
+				profession: r.profession || "",
+				experience: (r.experience || "").toString().slice(0, 32000),
+				motivation: (r.motivation || "").toString().slice(0, 32000),
+			});
+		});
+
+		const buffer = await workbook.xlsx.writeBuffer();
+		res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		res.setHeader("Content-Disposition", "attachment; filename=connect2roots-emails.xlsx");
+		res.send(buffer);
+	} catch (err) {
+		console.error("Export emails error:", err);
+		res.status(500).json({ message: "Failed to export emails" });
+	}
+};
+
 const getDonations = async (req, res) => {
 	try {
 		const { status, limit = 100, offset = 0 } = req.query;
@@ -103,13 +163,16 @@ const getDonations = async (req, res) => {
 
 const getStats = async (req, res) => {
 	try {
-		const [emailsCount, donationsCount, donationsTotal] = await Promise.all([
+		const [emailsCount, volunteersCount, donationsCount, donationsTotal] = await Promise.all([
 			query("SELECT COUNT(*) FROM contact_submissions"),
+			query("SELECT COUNT(*) FROM volunteer_submissions").catch(() => ({ rows: [{ count: "0" }] })),
 			query("SELECT COUNT(*) FROM donations WHERE status = $1", ["completed"]),
 			query("SELECT COALESCE(SUM(amount_display), 0) AS total FROM donations WHERE status = $1", ["completed"]),
 		]);
+		const totalEmails = parseInt(emailsCount.rows[0].count, 10);
+		const totalVolunteers = parseInt(volunteersCount.rows[0].count, 10);
 		res.json({
-			totalEmails: parseInt(emailsCount.rows[0].count, 10),
+			totalEmails: totalEmails + totalVolunteers,
 			totalDonationsCount: parseInt(donationsCount.rows[0].count, 10),
 			totalDonationsAmount: parseFloat(donationsTotal.rows[0].total) || 0,
 		});
@@ -119,9 +182,43 @@ const getStats = async (req, res) => {
 	}
 };
 
+const getVolunteers = async (req, res) => {
+	try {
+		const { limit = 200, offset = 0 } = req.query;
+		const result = await query(
+			`SELECT id, email, full_name, gender, mobile_no, date_of_birth, current_address,
+			        native_city_village, languages, current_company_org, designation, linkedin_profile,
+			        years_of_experience, has_volunteered_before, highest_qualification, how_can_you_contribute,
+			        preferred_areas_mentoring, hours_per_week, preferred_days, preferred_timings, identity_number, created_at
+			 FROM volunteer_submissions
+			 ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
+			[parseInt(limit, 10) || 200, parseInt(offset, 10) || 0]
+		);
+		const countResult = await query("SELECT COUNT(*) FROM volunteer_submissions");
+		const total = parseInt(countResult.rows[0].count, 10);
+		res.json({
+			volunteers: result.rows,
+			total,
+			limit: parseInt(limit, 10) || 200,
+			offset: parseInt(offset, 10) || 0,
+		});
+	} catch (err) {
+		console.error("Admin volunteers list error:", err);
+		// If table doesn't exist yet (e.g. init-db not run), return empty list so admin UI doesn't 500
+		const msg = err.message || "";
+		if (msg.includes("volunteer_submissions") && (msg.includes("does not exist") || msg.includes("relation"))) {
+			console.warn("volunteer_submissions table missing. Run: npm run init-db");
+			return res.json({ volunteers: [], total: 0, limit: parseInt(req.query.limit, 10) || 200, offset: parseInt(req.query.offset, 10) || 0 });
+		}
+		res.status(500).json({ message: "Failed to fetch volunteers" });
+	}
+};
+
 module.exports = {
 	loginAdmin,
 	getEmails,
+	exportEmails,
 	getDonations,
 	getStats,
+	getVolunteers,
 };

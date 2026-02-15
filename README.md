@@ -22,7 +22,9 @@ Node.js + Express + PostgreSQL backend for the Connect2Roots website. It receive
 
 Default admin: **admin@connect2roots.org** / **admin123** (change in production.)
 
-**Admin dashboard (HTML):** After starting the server, open **http://localhost:4000/admin.html** to log in and view all emails (contact, partnership, mentor applications) and donations.
+**Admin dashboard (HTML):** After starting the server, open **http://localhost:4000/admin.html** to log in and view Mails (general, partnership, volunteering), donations, videos, and more.
+
+**Important:** The admin portal must be used with **this** backend (c2r-admin-backend) running on port 4000. If you see 404 for `/api/admin/volunteers`, restart this server from the **c2r-admin-backend** folder: `npm run dev` or `npm start`.
 
 ## API
 

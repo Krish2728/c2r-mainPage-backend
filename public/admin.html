@@ -52,12 +52,16 @@
 
     /* Tabs (Mentor-Mentee-main tab style) */
     .tabsWrap { margin-bottom: 24px; background: white; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; }
-    .tabs { display: flex; border-bottom: 2px solid #e5e7eb; background: #f9fafb; }
-    .tabs button { flex: 1; padding: 16px 24px; background: none; border: none; font-size: 15px; font-weight: 600; color: #6b7280; cursor: pointer; transition: all 0.3s; border-bottom: 3px solid transparent; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .tabsNavWrap { display: flex; align-items: stretch; border-bottom: 2px solid #e5e7eb; background: #f9fafb; }
+    .tabs { display: flex; flex: 1; }
+    .tabs button { flex: 1; min-width: 0; padding: 16px 24px; background: none; border: none; font-size: 15px; font-weight: 600; color: #6b7280; cursor: pointer; transition: all 0.3s; border-bottom: 3px solid transparent; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .tabs button:hover { background: #f3f4f6; }
     .tabs button.active { background: linear-gradient(135deg, #2d5016 0%, #4a7c2a 100%); color: white; border-bottom-color: #2d5016; }
+    .tabsDropdown { display: none; padding: 12px 16px; border-bottom: 2px solid #e5e7eb; background: #f9fafb; }
+    .tabsDropdown select { width: 100%; padding: 12px 16px; font-size: 15px; font-weight: 600; color: #1e293b; background: white; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; appearance: auto; }
+    .tabsDropdown select:focus { outline: none; border-color: #4a7c2a; }
     .tabContent { padding: 24px; background: white; }
-    .tabContent h3 { margin: 0 0 20px 0; font-size: 20px; font-weight: 600; color: #1e293b; }
+    .tabContent h3 { margin: 0 0 20px 0; font-size: 20px; font-weight: 600; color: #1e293b; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; max-width: 100%; }
 
     /* Resource Videos */
     .videosToolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
@@ -80,13 +84,29 @@
     .videoModal .form-input { width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; }
     .videoModal .form-input:focus { outline: none; border-color: #4a7c2a; }
 
+    /* Resource cards (career guides, reports, mentors) */
+    .resourceCard { background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .resourceCardTitle { font-size: 15px; font-weight: 600; color: #1e293b; margin: 0; line-height: 1.3; }
+    .resourceCardMeta { font-size: 12px; color: #64748b; margin: 0; }
+    .resourceCardDesc { font-size: 13px; color: #475569; margin: 0; line-height: 1.4; max-height: 2.8em; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .resourceCardActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .resourceCardActions button { padding: 6px 12px; font-size: 13px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; cursor: pointer; font-weight: 500; color: #475569; }
+    .resourceCardActions button:hover { background: #f1f5f9; color: #1e293b; }
+    .resourceCardActions button.delete:hover { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+    .resourceCardActions a { padding: 6px 12px; font-size: 13px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; font-weight: 500; color: #475569; text-decoration: none; display: inline-block; }
+    .resourceCardActions a:hover { background: #f1f5f9; color: #1e293b; }
+    .resourceGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .resourceToolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+    .btnAdd { padding: 10px 20px; background: linear-gradient(135deg, #2d5016 0%, #4a7c2a 100%); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .btnAdd:hover { box-shadow: 0 4px 12px rgba(74, 124, 42, 0.35); }
+
     /* Table (Mentor-Mentee-main table style) */
     .tableWrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; }
     th { padding: 12px; text-align: left; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; background: #f8fafc; border-bottom: 2px solid #e2e8f0; }
     td { padding: 12px; font-size: 14px; color: #1e293b; border-bottom: 1px solid #e2e8f0; }
-    tr.email-row { cursor: pointer; transition: background 0.2s; }
-    tr.email-row:hover { background: #f8fafc; }
+    tr.email-row, tr.volunteer-row { cursor: pointer; transition: background 0.2s; }
+    tr.email-row:hover, tr.volunteer-row:hover { background: #f8fafc; }
     .muted { color: #9ca3af; text-align: center; padding: 40px; }
 
     .hidden { display: none !important; }
@@ -109,10 +129,23 @@
     .mail-type-general { background: #dbeafe; color: #1e40af; }
     .mail-type-partnership { background: #fce7f3; color: #be185d; }
     .mail-type-mentor_application { background: #d1fae5; color: #065f46; }
+    .mail-type-volunteer { background: #fef3c7; color: #92400e; }
+
+    .mailSubTabsWrap { background: #f8fafc; border-radius: 10px; padding: 4px; border: 1px solid #e2e8f0; }
+    .mailSubTabs { display: flex; gap: 4px; flex-wrap: wrap; }
+    .mailSubTab { padding: 10px 20px; border: none; background: transparent; border-radius: 8px; font-size: 14px; font-weight: 600; color: #64748b; cursor: pointer; transition: all 0.2s; }
+    .mailSubTab:hover { background: #e2e8f0; color: #1e293b; }
+    .mailSubTab.active { background: #2d5016; color: white; }
+    .mailPanel { min-height: 120px; }
 
     @media (max-width: 768px) {
       .header { flex-direction: column; align-items: flex-start; }
       .statsGrid { grid-template-columns: 1fr; }
+      .tabs { display: none; }
+      .tabsDropdown { display: block; }
+    }
+    @media (min-width: 769px) {
+      .tabsDropdown { display: none !important; }
     }
   </style>
 </head>
@@ -145,7 +178,7 @@
         <div class="header-logo">C2R</div>
         <div>
           <h1 class="title">Admin Dashboard</h1>
-          <p class="subtitle">Emails, donations & resource videos</p>
+          <p class="subtitle">Emails, donations, videos, guides, reports & mentor resources</p>
         </div>
       </div>
       <div class="adminInfo">
@@ -183,19 +216,67 @@
     </div>
 
     <div class="tabsWrap">
-      <div class="tabs">
-        <button type="button" class="active" data-tab="emails"><i data-lucide="inbox"></i> Emails / Inquiries</button>
-        <button type="button" data-tab="donations"><i data-lucide="wallet"></i> Donations</button>
-        <button type="button" data-tab="videos"><i data-lucide="video"></i> Resource Videos</button>
+      <div class="tabsNavWrap">
+        <div class="tabs">
+          <button type="button" class="active" data-tab="emails"><i data-lucide="inbox"></i> Mails</button>
+          <button type="button" data-tab="donations"><i data-lucide="wallet"></i> Donations</button>
+          <button type="button" data-tab="videos"><i data-lucide="video"></i> Videos</button>
+          <button type="button" data-tab="careers"><i data-lucide="book-open"></i> Career Guides</button>
+          <button type="button" data-tab="reports"><i data-lucide="file-down"></i> Annual Reports</button>
+          <button type="button" data-tab="mentors"><i data-lucide="file-text"></i> For Mentors</button>
+          <button type="button" data-tab="coursesignups"><i data-lucide="graduation-cap"></i> Course Signups</button>
+        </div>
+        <div class="tabsDropdown" aria-label="Choose section">
+          <select id="tabSelect">
+            <option value="emails">Mails</option>
+            <option value="donations">Donations</option>
+            <option value="videos">Videos</option>
+            <option value="careers">Career Guides</option>
+            <option value="reports">Annual Reports</option>
+            <option value="mentors">For Mentors</option>
+            <option value="coursesignups">Course Signups</option>
+          </select>
+        </div>
       </div>
       <div class="tabContent">
         <div id="emailsTab">
-          <h3>Contact submissions & partnership inquiries</h3>
-          <div class="tableWrap">
-            <table>
-              <thead><tr><th>Date</th><th>Type</th><th>Name / Company</th><th>Email</th><th>Message</th></tr></thead>
-              <tbody id="emailsBody"></tbody>
-            </table>
+          <div class="videosToolbar" style="margin-bottom:16px;">
+            <h3 style="margin:0;">Mails</h3>
+            <button type="button" class="btnAdd" id="exportEmailsBtn"><i data-lucide="download"></i> Export to Excel</button>
+          </div>
+          <div class="mailSubTabsWrap" style="margin-bottom:16px;">
+            <div class="mailSubTabs">
+              <button type="button" class="mailSubTab active" data-mail-sub="general">General inquiry</button>
+              <button type="button" class="mailSubTab" data-mail-sub="partnership">Partnership inquiries</button>
+              <button type="button" class="mailSubTab" data-mail-sub="volunteering">Volunteering</button>
+            </div>
+          </div>
+          <div id="mailPanelGeneral" class="mailPanel">
+            <div class="tableWrap">
+              <table>
+                <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Message</th></tr></thead>
+                <tbody id="emailsBodyGeneral"></tbody>
+              </table>
+            </div>
+            <p id="emailsEmptyGeneral" class="muted hidden" style="padding:24px; text-align:center;">No general inquiries yet.</p>
+          </div>
+          <div id="mailPanelPartnership" class="mailPanel hidden">
+            <div class="tableWrap">
+              <table>
+                <thead><tr><th>Date</th><th>Company</th><th>Contact</th><th>Email</th><th>Message</th></tr></thead>
+                <tbody id="emailsBodyPartnership"></tbody>
+              </table>
+            </div>
+            <p id="emailsEmptyPartnership" class="muted hidden" style="padding:24px; text-align:center;">No partnership inquiries yet.</p>
+          </div>
+          <div id="mailPanelVolunteering" class="mailPanel hidden">
+            <div class="tableWrap">
+              <table>
+                <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Mobile</th><th>Contribution</th></tr></thead>
+                <tbody id="volunteersBody"></tbody>
+              </table>
+            </div>
+            <p id="volunteersEmpty" class="muted hidden" style="padding:24px; text-align:center;">No volunteer submissions yet.</p>
           </div>
         </div>
         <div id="donationsTab" class="hidden">
@@ -217,6 +298,47 @@
           <div id="videosGrid" class="videosGrid"></div>
           <div id="videosEmpty" class="muted hidden" style="padding:32px; text-align:center;">No videos yet. Add one to show on the Resources page.</div>
         </div>
+        <div id="careersTab" class="hidden">
+          <h3>Career Guides</h3>
+          <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">PDFs shown on the website Resources page → Career Guides. Use a public link (e.g. Google Drive, Dropbox).</p>
+          <div class="resourceToolbar">
+            <span></span>
+            <button type="button" class="btnAdd" id="addCareerBtn"><i data-lucide="plus"></i> Add guide</button>
+          </div>
+          <div id="careersGrid" class="resourceGrid"></div>
+          <div id="careersEmpty" class="muted hidden" style="padding:32px; text-align:center;">No career guides yet.</div>
+        </div>
+        <div id="reportsTab" class="hidden">
+          <h3>Annual Reports</h3>
+          <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">PDFs shown on Resources → Annual Reports. Use a public link to the report.</p>
+          <div class="resourceToolbar">
+            <span></span>
+            <button type="button" class="btnAdd" id="addReportBtn"><i data-lucide="plus"></i> Add report</button>
+          </div>
+          <div id="reportsGrid" class="resourceGrid"></div>
+          <div id="reportsEmpty" class="muted hidden" style="padding:32px; text-align:center;">No annual reports yet.</div>
+        </div>
+        <div id="mentorsTab" class="hidden">
+          <h3>Resources for Mentors</h3>
+          <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">PDFs shown on Resources → For Mentors. Use a public link to the resource.</p>
+          <div class="resourceToolbar">
+            <span></span>
+            <button type="button" class="btnAdd" id="addMentorBtn"><i data-lucide="plus"></i> Add resource</button>
+          </div>
+          <div id="mentorsGrid" class="resourceGrid"></div>
+          <div id="mentorsEmpty" class="muted hidden" style="padding:32px; text-align:center;">No mentor resources yet.</div>
+        </div>
+        <div id="coursesignupsTab" class="hidden">
+          <h3>Free course signups</h3>
+          <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">People who signed up or signed in to access free courses on the Resources page.</p>
+          <div class="tableWrap">
+            <table>
+              <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Age</th><th>Mobile</th></tr></thead>
+              <tbody id="coursesignupsBody"></tbody>
+            </table>
+          </div>
+          <div id="coursesignupsEmpty" class="muted hidden" style="padding:32px; text-align:center;">No signups yet.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -228,6 +350,16 @@
         <button type="button" class="modal-close" id="emailModalClose" aria-label="Close">&times;</button>
       </div>
       <div class="modal-body" id="emailModalBody"></div>
+    </div>
+  </div>
+
+  <div id="volunteerModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="volunteerModalTitle" style="max-width: 560px;">
+      <div class="modal-header">
+        <h2 id="volunteerModalTitle">Volunteer submission</h2>
+        <button type="button" class="modal-close" id="volunteerModalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" id="volunteerModalBody"></div>
     </div>
   </div>
 
@@ -267,6 +399,68 @@
     </div>
   </div>
 
+  <div id="careerModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal videoModal" role="dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <h2 id="careerModalTitle">Add career guide</h2>
+        <button type="button" class="modal-close" id="careerModalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="careerFormId" value="" />
+        <div class="form-group"><label class="form-label" for="careerFormTitle">Title</label><input type="text" id="careerFormTitle" class="form-input" placeholder="e.g. Resume Writing Guide" /></div>
+        <div class="form-group"><label class="form-label" for="careerFormDescription">Description</label><input type="text" id="careerFormDescription" class="form-input" placeholder="Short description" /></div>
+        <div class="form-group"><label class="form-label" for="careerFormCategory">Category</label><input type="text" id="careerFormCategory" class="form-input" placeholder="e.g. Career Prep" value="Career Prep" /></div>
+        <div class="form-group"><label class="form-label" for="careerFormPdfUrl">PDF URL</label><input type="url" id="careerFormPdfUrl" class="form-input" placeholder="https://..." /></div>
+        <div class="form-group"><label class="form-label" for="careerFormSortOrder">Sort order</label><input type="number" id="careerFormSortOrder" class="form-input" value="0" /></div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+          <button type="button" id="careerModalCancel" style="padding:10px 18px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-weight:500;">Cancel</button>
+          <button type="button" class="btnAdd" id="careerModalSave" style="padding:10px 18px;">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="reportModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal videoModal" role="dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <h2 id="reportModalTitle">Add annual report</h2>
+        <button type="button" class="modal-close" id="reportModalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="reportFormId" value="" />
+        <div class="form-group"><label class="form-label" for="reportFormYear">Year</label><input type="text" id="reportFormYear" class="form-input" placeholder="e.g. 2024" /></div>
+        <div class="form-group"><label class="form-label" for="reportFormTitle">Title</label><input type="text" id="reportFormTitle" class="form-input" placeholder="e.g. Annual Report 2024" /></div>
+        <div class="form-group"><label class="form-label" for="reportFormDescription">Description</label><input type="text" id="reportFormDescription" class="form-input" placeholder="Short description" /></div>
+        <div class="form-group"><label class="form-label" for="reportFormPdfUrl">PDF URL</label><input type="url" id="reportFormPdfUrl" class="form-input" placeholder="https://..." /></div>
+        <div class="form-group"><label class="form-label" for="reportFormSortOrder">Sort order</label><input type="number" id="reportFormSortOrder" class="form-input" value="0" /></div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+          <button type="button" id="reportModalCancel" style="padding:10px 18px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-weight:500;">Cancel</button>
+          <button type="button" class="btnAdd" id="reportModalSave" style="padding:10px 18px;">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mentorModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal videoModal" role="dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <h2 id="mentorModalTitle">Add mentor resource</h2>
+        <button type="button" class="modal-close" id="mentorModalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="mentorFormId" value="" />
+        <div class="form-group"><label class="form-label" for="mentorFormTitle">Title</label><input type="text" id="mentorFormTitle" class="form-input" placeholder="e.g. Mentor Training Manual" /></div>
+        <div class="form-group"><label class="form-label" for="mentorFormDescription">Description</label><input type="text" id="mentorFormDescription" class="form-input" placeholder="Short description" /></div>
+        <div class="form-group"><label class="form-label" for="mentorFormPdfUrl">PDF URL</label><input type="url" id="mentorFormPdfUrl" class="form-input" placeholder="https://..." /></div>
+        <div class="form-group"><label class="form-label" for="mentorFormSortOrder">Sort order</label><input type="number" id="mentorFormSortOrder" class="form-input" value="0" /></div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+          <button type="button" id="mentorModalCancel" style="padding:10px 18px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-weight:500;">Cancel</button>
+          <button type="button" class="btnAdd" id="mentorModalSave" style="padding:10px 18px;">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API = window.location.origin + '/api';
     let token = localStorage.getItem('c2r_admin_token');
@@ -279,12 +473,17 @@
     const passwordInput = document.getElementById('password');
     const loginBtn = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
-    const emailsBody = document.getElementById('emailsBody');
+    const emailsBodyGeneral = document.getElementById('emailsBodyGeneral');
+    const emailsBodyPartnership = document.getElementById('emailsBodyPartnership');
+    const volunteersBody = document.getElementById('volunteersBody');
     const donationsBody = document.getElementById('donationsBody');
     const statEmails = document.getElementById('statEmails');
     const statDonations = document.getElementById('statDonations');
     const statAmount = document.getElementById('statAmount');
-    let emailsList = [];
+    let emailsListGeneral = [];
+    let emailsListPartnership = [];
+    let volunteersList = [];
+    let currentMailSub = 'general';
 
     function show(el, visible) { el.classList.toggle('hidden', !visible); }
     function authHeaders() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }; }
@@ -340,26 +539,121 @@
       } catch (e) {}
     }
 
-    async function loadEmails() {
+    async function loadEmailsByType(type) {
       try {
-        const res = await fetch(API + '/admin/emails?limit=200', { headers: authHeaders() });
+        const res = await fetch(API + '/admin/emails?limit=200&type=' + encodeURIComponent(type), { headers: authHeaders() });
         const data = await res.json();
         if (!res.ok) return;
-        emailsList = data.emails || [];
-        if (emailsList.length === 0) {
-          emailsBody.innerHTML = '<tr><td colspan="5" class="muted">No submissions yet</td></tr>';
+        const list = data.emails || [];
+        const tbody = type === 'general' ? emailsBodyGeneral : emailsBodyPartnership;
+        const emptyEl = type === 'general' ? document.getElementById('emailsEmptyGeneral') : document.getElementById('emailsEmptyPartnership');
+        if (type === 'general') emailsListGeneral = list; else emailsListPartnership = list;
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="' + (type === 'general' ? 4 : 5) + '" class="muted">No submissions yet</td></tr>';
+          if (emptyEl) { emptyEl.classList.add('hidden'); }
         } else {
-          emailsBody.innerHTML = emailsList.map((e, i) => {
-            const nameOrCo = e.type === 'partnership' ? (e.company_name || e.contact_person || '-') : (e.name || '-');
-            const msg = (e.message || '').slice(0, 80) + ((e.message || '').length > 80 ? '…' : '');
-            return '<tr class="email-row" data-index="' + i + '"><td>' + new Date(e.created_at).toLocaleString() + '</td><td>' + e.type + '</td><td>' + escapeHtml(nameOrCo) + '</td><td>' + escapeHtml(e.email) + '</td><td>' + escapeHtml(msg) + '</td></tr>';
+          if (type === 'general') {
+            tbody.innerHTML = list.map((e, i) => {
+              const msg = (e.message || '').slice(0, 80) + ((e.message || '').length > 80 ? '…' : '');
+              return '<tr class="email-row" data-type="general" data-index="' + i + '"><td>' + new Date(e.created_at).toLocaleString() + '</td><td>' + escapeHtml(e.name || '-') + '</td><td>' + escapeHtml(e.email) + '</td><td>' + escapeHtml(msg) + '</td></tr>';
+            }).join('');
+          } else {
+            tbody.innerHTML = list.map((e, i) => {
+              const msg = (e.message || '').slice(0, 80) + ((e.message || '').length > 80 ? '…' : '');
+              return '<tr class="email-row" data-type="partnership" data-index="' + i + '"><td>' + new Date(e.created_at).toLocaleString() + '</td><td>' + escapeHtml(e.company_name || '-') + '</td><td>' + escapeHtml(e.contact_person || '-') + '</td><td>' + escapeHtml(e.email) + '</td><td>' + escapeHtml(msg) + '</td></tr>';
+            }).join('');
+          }
+          tbody.querySelectorAll('.email-row').forEach(row => {
+            row.addEventListener('click', () => {
+              const typ = row.dataset.type;
+              const idx = parseInt(row.dataset.index, 10);
+              openEmailModal(typ === 'general' ? emailsListGeneral[idx] : emailsListPartnership[idx]);
+            });
+          });
+          if (emptyEl) emptyEl.classList.add('hidden');
+        }
+      } catch (e) {
+        const tbody = type === 'general' ? emailsBodyGeneral : emailsBodyPartnership;
+        tbody.innerHTML = '<tr><td colspan="5">Failed to load</td></tr>';
+      }
+    }
+
+    async function loadVolunteers() {
+      const emptyEl = document.getElementById('volunteersEmpty');
+      try {
+        const res = await fetch(API + '/admin/volunteers?limit=200', { headers: authHeaders() });
+        if (res.status === 404) {
+          volunteersList = [];
+          volunteersBody.innerHTML = '';
+          emptyEl.textContent = 'Volunteers endpoint not available. Use c2r-admin-backend (see README) and restart the server.';
+          emptyEl.classList.remove('hidden');
+          return;
+        }
+        const data = await res.json();
+        if (!res.ok) {
+          volunteersBody.innerHTML = '<tr><td colspan="5">Failed to load</td></tr>';
+          emptyEl.classList.add('hidden');
+          return;
+        }
+        volunteersList = data.volunteers || [];
+        if (volunteersList.length === 0) {
+          volunteersBody.innerHTML = '';
+          emptyEl.textContent = 'No volunteer submissions yet.';
+          emptyEl.classList.remove('hidden');
+        } else {
+          emptyEl.classList.add('hidden');
+          volunteersBody.innerHTML = volunteersList.map((v, i) => {
+            const contrib = (v.how_can_you_contribute || '').slice(0, 60) + ((v.how_can_you_contribute || '').length > 60 ? '…' : '');
+            return '<tr class="volunteer-row" data-index="' + i + '"><td>' + new Date(v.created_at).toLocaleString() + '</td><td>' + escapeHtml(v.full_name || '-') + '</td><td>' + escapeHtml(v.email || '-') + '</td><td>' + escapeHtml(v.mobile_no || '-') + '</td><td>' + escapeHtml(contrib) + '</td></tr>';
           }).join('');
-          emailsBody.querySelectorAll('.email-row').forEach(row => {
-            row.addEventListener('click', () => openEmailModal(emailsList[parseInt(row.dataset.index, 10)]));
+          volunteersBody.querySelectorAll('.volunteer-row').forEach(row => {
+            row.addEventListener('click', () => openVolunteerModal(volunteersList[parseInt(row.dataset.index, 10)]));
           });
         }
-      } catch (e) { emailsBody.innerHTML = '<tr><td colspan="5">Failed to load</td></tr>'; }
+      } catch (e) {
+        volunteersBody.innerHTML = '';
+        emptyEl.textContent = 'Could not load volunteers. Ensure c2r-admin-backend is running on this port (see README).';
+        emptyEl.classList.remove('hidden');
+      }
     }
+
+    function switchMailSubTab(sub) {
+      currentMailSub = sub;
+      document.querySelectorAll('.mailSubTab').forEach(b => b.classList.toggle('active', b.dataset.mailSub === sub));
+      document.getElementById('mailPanelGeneral').classList.toggle('hidden', sub !== 'general');
+      document.getElementById('mailPanelPartnership').classList.toggle('hidden', sub !== 'partnership');
+      document.getElementById('mailPanelVolunteering').classList.toggle('hidden', sub !== 'volunteering');
+      if (sub === 'general') loadEmailsByType('general');
+      else if (sub === 'partnership') loadEmailsByType('partnership');
+      else loadVolunteers();
+      initIcons();
+    }
+
+    document.querySelectorAll('.mailSubTab').forEach(btn => {
+      btn.addEventListener('click', function() { switchMailSubTab(btn.dataset.mailSub); });
+    });
+
+    async function exportEmailsToExcel() {
+      var btn = document.getElementById('exportEmailsBtn');
+      if (btn) btn.disabled = true;
+      try {
+        var res = await fetch(API + '/admin/emails/export', { headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) { alert('Export failed. Please try again.'); return; }
+        var blob = await res.blob();
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'connect2roots-emails.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (e) { alert('Export failed. Please try again.'); }
+      if (btn) btn.disabled = false;
+      initIcons();
+    }
+    document.getElementById('exportEmailsBtn').addEventListener('click', exportEmailsToExcel);
 
     function openEmailModal(e) {
       const typeLabel = (e.type || 'general').replace(/_/g, ' ');
@@ -394,6 +688,52 @@
       document.getElementById('emailModal').setAttribute('aria-hidden', 'true');
     }
 
+    function openVolunteerModal(v) {
+      if (!v) return;
+      const fmt = function(label, value) {
+        if (value == null || value === '') return '';
+        return '<div class="mail-meta-row"><span class="mail-meta-label">' + escapeHtml(label) + ':</span><span class="mail-meta-value">' + escapeHtml(String(value)) + '</span></div>';
+      };
+      let html = '<div class="mail-meta">';
+      html += fmt('Date', v.created_at ? new Date(v.created_at).toLocaleString() : '');
+      html += fmt('Full Name', v.full_name);
+      html += fmt('Email', v.email);
+      html += fmt('Gender', v.gender);
+      html += fmt('Mobile', v.mobile_no);
+      html += fmt('Date of Birth', v.date_of_birth);
+      html += fmt('Current Address', v.current_address);
+      html += fmt('Native City/Village', v.native_city_village);
+      html += fmt('Languages', v.languages);
+      html += fmt('Company/Organisation', v.current_company_org);
+      html += fmt('Designation', v.designation);
+      html += fmt('LinkedIn', v.linkedin_profile);
+      html += fmt('Years of Experience', v.years_of_experience);
+      html += fmt('Volunteered Before', v.has_volunteered_before);
+      html += fmt('Highest Qualification', v.highest_qualification);
+      html += fmt('How can you contribute', v.how_can_you_contribute);
+      html += fmt('Preferred areas', v.preferred_areas_mentoring);
+      html += fmt('Hours per week', v.hours_per_week);
+      html += fmt('Preferred Days', v.preferred_days);
+      html += fmt('Preferred Timings', v.preferred_timings);
+      html += fmt('Identity number', v.identity_number);
+      html += '</div>';
+      document.getElementById('volunteerModalTitle').textContent = 'Volunteer – ' + (v.full_name || v.email || 'Submission');
+      document.getElementById('volunteerModalBody').innerHTML = html;
+      document.getElementById('volunteerModal').classList.remove('hidden');
+      document.getElementById('volunteerModal').setAttribute('aria-hidden', 'false');
+    }
+
+    function closeVolunteerModal() {
+      document.activeElement && document.activeElement.blur();
+      document.getElementById('volunteerModal').classList.add('hidden');
+      document.getElementById('volunteerModal').setAttribute('aria-hidden', 'true');
+    }
+
+    document.getElementById('volunteerModalClose').addEventListener('click', closeVolunteerModal);
+    document.getElementById('volunteerModal').addEventListener('click', function(ev) {
+      if (ev.target === this) closeVolunteerModal();
+    });
+
     async function loadDonations() {
       try {
         const res = await fetch(API + '/admin/donations?limit=200', { headers: authHeaders() });
@@ -409,7 +749,9 @@
 
     function loadDashboard() {
       loadStats();
-      loadEmails();
+      loadEmailsByType('general');
+      loadEmailsByType('partnership');
+      loadVolunteers();
       loadDonations();
     }
 
@@ -421,20 +763,37 @@
     document.addEventListener('keydown', function(ev) {
       if (ev.key !== 'Escape') return;
       if (!document.getElementById('emailModal').classList.contains('hidden')) closeEmailModal();
+      else if (!document.getElementById('volunteerModal').classList.contains('hidden')) closeVolunteerModal();
       else if (!document.getElementById('videoModal').classList.contains('hidden')) closeVideoModal();
+      else if (!document.getElementById('careerModal').classList.contains('hidden')) closeCareerModal();
+      else if (!document.getElementById('reportModal').classList.contains('hidden')) closeReportModal();
+      else if (!document.getElementById('mentorModal').classList.contains('hidden')) closeMentorModal();
     });
-    document.querySelectorAll('.tabs button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const tab = btn.dataset.tab;
-        document.getElementById('emailsTab').classList.toggle('hidden', tab !== 'emails');
-        document.getElementById('donationsTab').classList.toggle('hidden', tab !== 'donations');
-        document.getElementById('videosTab').classList.toggle('hidden', tab !== 'videos');
-        if (tab === 'videos') loadVideos();
-        initIcons();
+    function switchTab(tab) {
+      document.querySelectorAll('.tabs button').forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === tab);
       });
+      var sel = document.getElementById('tabSelect');
+      if (sel) sel.value = tab;
+      document.getElementById('emailsTab').classList.toggle('hidden', tab !== 'emails');
+      document.getElementById('donationsTab').classList.toggle('hidden', tab !== 'donations');
+      document.getElementById('videosTab').classList.toggle('hidden', tab !== 'videos');
+      document.getElementById('careersTab').classList.toggle('hidden', tab !== 'careers');
+      document.getElementById('reportsTab').classList.toggle('hidden', tab !== 'reports');
+      document.getElementById('mentorsTab').classList.toggle('hidden', tab !== 'mentors');
+      document.getElementById('coursesignupsTab').classList.toggle('hidden', tab !== 'coursesignups');
+        if (tab === 'videos') loadVideos();
+        if (tab === 'careers') loadCareerGuides();
+        if (tab === 'reports') loadAnnualReports();
+        if (tab === 'mentors') loadMentorResources();
+        if (tab === 'coursesignups') loadCourseSignups();
+        initIcons();
+    }
+    document.querySelectorAll('.tabs button').forEach(btn => {
+      btn.addEventListener('click', function() { switchTab(btn.dataset.tab); });
     });
+    var tabSelect = document.getElementById('tabSelect');
+    if (tabSelect) tabSelect.addEventListener('change', function() { switchTab(tabSelect.value); });
 
     function getYouTubeVideoId(input) {
       if (!input || typeof input !== 'string') return '';
@@ -472,9 +831,9 @@
           empty.classList.remove('hidden');
         } else {
           empty.classList.add('hidden');
+          var thumbPlaceholder = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'320\' height=\'180\'%3E%3Crect fill=\'%23e2e8f0\' width=\'320\' height=\'180\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2394a3b8\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'14\'%3ENo thumbnail%3C/text%3E%3C/svg%3E';
           grid.innerHTML = videos.map(v => {
-            const cleanId = getYouTubeVideoId(v.video_id);
-            const thumb = v.video_id ? '<img src="' + YOUTUBE_THUMB(v.video_id) + '" alt="" onerror="this.onerror=null;this.src=\'https://img.youtube.com/vi/' + cleanId + '/mqdefault.jpg\'" />' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;">No thumbnail</div>';
+            const thumb = v.video_id ? '<img src="' + YOUTUBE_THUMB(v.video_id) + '" alt="" onerror="this.onerror=null;this.src=\'' + thumbPlaceholder + '\'" />' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;">No thumbnail</div>';
             const desc = escapeHtml((v.description || '—').slice(0, 120)) + ((v.description || '').length > 120 ? '…' : '');
             return '<div class="videoCard" data-id="' + v.id + '">' +
               '<div class="videoCardThumb">' + thumb + '</div>' +
@@ -576,6 +935,343 @@
       } catch (e) {
         alert('Failed to delete video');
       }
+    }
+
+    async function loadCareerGuides() {
+      var grid = document.getElementById('careersGrid');
+      var empty = document.getElementById('careersEmpty');
+      try {
+        var res = await fetch(API + '/admin/career-guides', { headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (res.status === 503) {
+          grid.innerHTML = '';
+          empty.textContent = 'Database not set up. On the server run: npm run init-db';
+          empty.classList.remove('hidden');
+          initIcons();
+          return;
+        }
+        var list = res.ok ? await res.json() : [];
+        var items = Array.isArray(list) ? list : [];
+        if (items.length === 0) {
+          grid.innerHTML = '';
+          empty.textContent = 'No career guides yet. Add one above.';
+          empty.classList.remove('hidden');
+        } else {
+          empty.classList.add('hidden');
+          grid.innerHTML = items.map(function(g) {
+            var desc = escapeHtml((g.description || '—').slice(0, 100)) + ((g.description || '').length > 100 ? '…' : '');
+            return '<div class="resourceCard" data-id="' + g.id + '">' +
+              '<p class="resourceCardTitle">' + escapeHtml(g.title) + '</p>' +
+              '<p class="resourceCardMeta">' + escapeHtml(g.category || '') + ' · Order: ' + (g.sort_order ?? 0) + '</p>' +
+              '<p class="resourceCardDesc">' + desc + '</p>' +
+              '<div class="resourceCardActions">' +
+              '<a href="' + escapeHtml(g.pdf_url) + '" target="_blank" rel="noopener">PDF</a>' +
+              '<button type="button" class="editCareer">Edit</button>' +
+              '<button type="button" class="deleteCareer delete">Delete</button></div></div>';
+          }).join('');
+          grid.querySelectorAll('.editCareer').forEach(function(btn) {
+            btn.addEventListener('click', function() { openCareerModal(items.find(function(g) { return g.id === parseInt(btn.closest('.resourceCard').dataset.id, 10); })); });
+          });
+          grid.querySelectorAll('.deleteCareer').forEach(function(btn) {
+            btn.addEventListener('click', function() { deleteCareer(parseInt(btn.closest('.resourceCard').dataset.id, 10)); });
+          });
+        }
+      } catch (e) { grid.innerHTML = ''; empty.textContent = 'Failed to load'; empty.classList.remove('hidden'); }
+      initIcons();
+    }
+
+    function openCareerModal(g) {
+      document.getElementById('careerModalTitle').textContent = g ? 'Edit career guide' : 'Add career guide';
+      document.getElementById('careerFormId').value = g ? g.id : '';
+      document.getElementById('careerFormTitle').value = g ? g.title : '';
+      document.getElementById('careerFormDescription').value = g ? (g.description || '') : '';
+      document.getElementById('careerFormCategory').value = g ? (g.category || 'Career Prep') : 'Career Prep';
+      document.getElementById('careerFormPdfUrl').value = g ? g.pdf_url : '';
+      document.getElementById('careerFormSortOrder').value = g ? (g.sort_order ?? 0) : document.getElementById('careersGrid').querySelectorAll('.resourceCard').length;
+      var el = document.getElementById('careerModal');
+      el.classList.remove('hidden');
+      el.setAttribute('aria-hidden', 'false');
+      setTimeout(function() { document.getElementById('careerFormTitle').focus(); }, 0);
+    }
+    function closeCareerModal() {
+      var el = document.getElementById('careerModal');
+      if (document.activeElement && el.contains(document.activeElement)) {
+        var btn = document.getElementById('addCareerBtn');
+        if (btn) btn.focus(); else document.activeElement.blur();
+      }
+      el.classList.add('hidden');
+      el.setAttribute('aria-hidden', 'true');
+    }
+    document.getElementById('addCareerBtn').addEventListener('click', function() { openCareerModal(null); });
+    document.getElementById('careerModalClose').addEventListener('click', closeCareerModal);
+    document.getElementById('careerModalCancel').addEventListener('click', closeCareerModal);
+    document.getElementById('careerModal').addEventListener('click', function(ev) { if (ev.target === this) closeCareerModal(); });
+
+    async function saveCareer() {
+      var id = document.getElementById('careerFormId').value;
+      var title = document.getElementById('careerFormTitle').value.trim();
+      var pdfUrl = document.getElementById('careerFormPdfUrl').value.trim();
+      if (!title || !pdfUrl) return;
+      var body = {
+        title: title,
+        description: document.getElementById('careerFormDescription').value.trim(),
+        category: document.getElementById('careerFormCategory').value.trim() || 'Career Prep',
+        pdf_url: pdfUrl,
+        sort_order: parseInt(document.getElementById('careerFormSortOrder').value, 10) || 0
+      };
+      try {
+        var url = id ? API + '/admin/career-guides/' + id : API + '/admin/career-guides';
+        var res = await fetch(url, { method: id ? 'PUT' : 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Save failed');
+        closeCareerModal();
+        loadCareerGuides();
+      } catch (e) { alert('Failed to save'); }
+    }
+    document.getElementById('careerModalSave').addEventListener('click', saveCareer);
+
+    async function deleteCareer(id) {
+      if (!confirm('Remove this career guide?')) return;
+      try {
+        var res = await fetch(API + '/admin/career-guides/' + id, { method: 'DELETE', headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Delete failed');
+        loadCareerGuides();
+      } catch (e) { alert('Failed to delete'); }
+    }
+
+    async function loadAnnualReports() {
+      var grid = document.getElementById('reportsGrid');
+      var empty = document.getElementById('reportsEmpty');
+      try {
+        var res = await fetch(API + '/admin/annual-reports', { headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (res.status === 503) {
+          grid.innerHTML = '';
+          empty.textContent = 'Database not set up. On the server run: npm run init-db';
+          empty.classList.remove('hidden');
+          initIcons();
+          return;
+        }
+        var list = res.ok ? await res.json() : [];
+        var items = Array.isArray(list) ? list : [];
+        if (items.length === 0) {
+          grid.innerHTML = '';
+          empty.textContent = 'No annual reports yet. Add one above.';
+          empty.classList.remove('hidden');
+        } else {
+          empty.classList.add('hidden');
+          grid.innerHTML = items.map(function(r) {
+            var desc = escapeHtml((r.description || '—').slice(0, 100)) + ((r.description || '').length > 100 ? '…' : '');
+            return '<div class="resourceCard" data-id="' + r.id + '">' +
+              '<p class="resourceCardTitle">' + escapeHtml(r.year) + ' – ' + escapeHtml(r.title) + '</p>' +
+              '<p class="resourceCardMeta">Order: ' + (r.sort_order ?? 0) + '</p>' +
+              '<p class="resourceCardDesc">' + desc + '</p>' +
+              '<div class="resourceCardActions">' +
+              '<a href="' + escapeHtml(r.pdf_url) + '" target="_blank" rel="noopener">PDF</a>' +
+              '<button type="button" class="editReport">Edit</button>' +
+              '<button type="button" class="deleteReport delete">Delete</button></div></div>';
+          }).join('');
+          grid.querySelectorAll('.editReport').forEach(function(btn) {
+            btn.addEventListener('click', function() { openReportModal(items.find(function(r) { return r.id === parseInt(btn.closest('.resourceCard').dataset.id, 10); })); });
+          });
+          grid.querySelectorAll('.deleteReport').forEach(function(btn) {
+            btn.addEventListener('click', function() { deleteReport(parseInt(btn.closest('.resourceCard').dataset.id, 10)); });
+          });
+        }
+      } catch (e) { grid.innerHTML = ''; empty.textContent = 'Failed to load'; empty.classList.remove('hidden'); }
+      initIcons();
+    }
+
+    function openReportModal(r) {
+      document.getElementById('reportModalTitle').textContent = r ? 'Edit annual report' : 'Add annual report';
+      document.getElementById('reportFormId').value = r ? r.id : '';
+      document.getElementById('reportFormYear').value = r ? r.year : new Date().getFullYear();
+      document.getElementById('reportFormTitle').value = r ? r.title : '';
+      document.getElementById('reportFormDescription').value = r ? (r.description || '') : '';
+      document.getElementById('reportFormPdfUrl').value = r ? r.pdf_url : '';
+      document.getElementById('reportFormSortOrder').value = r ? (r.sort_order ?? 0) : document.getElementById('reportsGrid').querySelectorAll('.resourceCard').length;
+      var el = document.getElementById('reportModal');
+      el.classList.remove('hidden');
+      el.setAttribute('aria-hidden', 'false');
+      setTimeout(function() { document.getElementById('reportFormYear').focus(); }, 0);
+    }
+    function closeReportModal() {
+      var el = document.getElementById('reportModal');
+      if (document.activeElement && el.contains(document.activeElement)) {
+        var btn = document.getElementById('addReportBtn');
+        if (btn) btn.focus(); else document.activeElement.blur();
+      }
+      el.classList.add('hidden');
+      el.setAttribute('aria-hidden', 'true');
+    }
+    document.getElementById('addReportBtn').addEventListener('click', function() { openReportModal(null); });
+    document.getElementById('reportModalClose').addEventListener('click', closeReportModal);
+    document.getElementById('reportModalCancel').addEventListener('click', closeReportModal);
+    document.getElementById('reportModal').addEventListener('click', function(ev) { if (ev.target === this) closeReportModal(); });
+
+    async function saveReport() {
+      var id = document.getElementById('reportFormId').value;
+      var title = document.getElementById('reportFormTitle').value.trim();
+      var pdfUrl = document.getElementById('reportFormPdfUrl').value.trim();
+      if (!title || !pdfUrl) return;
+      var body = {
+        year: document.getElementById('reportFormYear').value.trim() || String(new Date().getFullYear()),
+        title: title,
+        description: document.getElementById('reportFormDescription').value.trim(),
+        pdf_url: pdfUrl,
+        sort_order: parseInt(document.getElementById('reportFormSortOrder').value, 10) || 0
+      };
+      try {
+        var url = id ? API + '/admin/annual-reports/' + id : API + '/admin/annual-reports';
+        var res = await fetch(url, { method: id ? 'PUT' : 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Save failed');
+        closeReportModal();
+        loadAnnualReports();
+      } catch (e) { alert('Failed to save'); }
+    }
+    document.getElementById('reportModalSave').addEventListener('click', saveReport);
+
+    async function deleteReport(id) {
+      if (!confirm('Remove this annual report?')) return;
+      try {
+        var res = await fetch(API + '/admin/annual-reports/' + id, { method: 'DELETE', headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Delete failed');
+        loadAnnualReports();
+      } catch (e) { alert('Failed to delete'); }
+    }
+
+    async function loadMentorResources() {
+      var grid = document.getElementById('mentorsGrid');
+      var empty = document.getElementById('mentorsEmpty');
+      try {
+        var res = await fetch(API + '/admin/mentor-resources', { headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (res.status === 503) {
+          grid.innerHTML = '';
+          empty.textContent = 'Database not set up. On the server run: npm run init-db';
+          empty.classList.remove('hidden');
+          initIcons();
+          return;
+        }
+        var list = res.ok ? await res.json() : [];
+        var items = Array.isArray(list) ? list : [];
+        if (items.length === 0) {
+          grid.innerHTML = '';
+          empty.textContent = 'No mentor resources yet. Add one above.';
+          empty.classList.remove('hidden');
+        } else {
+          empty.classList.add('hidden');
+          grid.innerHTML = items.map(function(m) {
+            var desc = escapeHtml((m.description || '—').slice(0, 100)) + ((m.description || '').length > 100 ? '…' : '');
+            return '<div class="resourceCard" data-id="' + m.id + '">' +
+              '<p class="resourceCardTitle">' + escapeHtml(m.title) + '</p>' +
+              '<p class="resourceCardMeta">Order: ' + (m.sort_order ?? 0) + '</p>' +
+              '<p class="resourceCardDesc">' + desc + '</p>' +
+              '<div class="resourceCardActions">' +
+              '<a href="' + escapeHtml(m.pdf_url) + '" target="_blank" rel="noopener">PDF</a>' +
+              '<button type="button" class="editMentor">Edit</button>' +
+              '<button type="button" class="deleteMentor delete">Delete</button></div></div>';
+          }).join('');
+          grid.querySelectorAll('.editMentor').forEach(function(btn) {
+            btn.addEventListener('click', function() { openMentorModal(items.find(function(m) { return m.id === parseInt(btn.closest('.resourceCard').dataset.id, 10); })); });
+          });
+          grid.querySelectorAll('.deleteMentor').forEach(function(btn) {
+            btn.addEventListener('click', function() { deleteMentor(parseInt(btn.closest('.resourceCard').dataset.id, 10)); });
+          });
+        }
+      } catch (e) { grid.innerHTML = ''; empty.textContent = 'Failed to load'; empty.classList.remove('hidden'); }
+      initIcons();
+    }
+
+    function openMentorModal(m) {
+      document.getElementById('mentorModalTitle').textContent = m ? 'Edit mentor resource' : 'Add mentor resource';
+      document.getElementById('mentorFormId').value = m ? m.id : '';
+      document.getElementById('mentorFormTitle').value = m ? m.title : '';
+      document.getElementById('mentorFormDescription').value = m ? (m.description || '') : '';
+      document.getElementById('mentorFormPdfUrl').value = m ? m.pdf_url : '';
+      document.getElementById('mentorFormSortOrder').value = m ? (m.sort_order ?? 0) : document.getElementById('mentorsGrid').querySelectorAll('.resourceCard').length;
+      var el = document.getElementById('mentorModal');
+      el.classList.remove('hidden');
+      el.setAttribute('aria-hidden', 'false');
+      setTimeout(function() { document.getElementById('mentorFormTitle').focus(); }, 0);
+    }
+    function closeMentorModal() {
+      var el = document.getElementById('mentorModal');
+      if (document.activeElement && el.contains(document.activeElement)) {
+        var btn = document.getElementById('addMentorBtn');
+        if (btn) btn.focus(); else document.activeElement.blur();
+      }
+      el.classList.add('hidden');
+      el.setAttribute('aria-hidden', 'true');
+    }
+    document.getElementById('addMentorBtn').addEventListener('click', function() { openMentorModal(null); });
+    document.getElementById('mentorModalClose').addEventListener('click', closeMentorModal);
+    document.getElementById('mentorModalCancel').addEventListener('click', closeMentorModal);
+    document.getElementById('mentorModal').addEventListener('click', function(ev) { if (ev.target === this) closeMentorModal(); });
+
+    async function saveMentor() {
+      var id = document.getElementById('mentorFormId').value;
+      var title = document.getElementById('mentorFormTitle').value.trim();
+      var pdfUrl = document.getElementById('mentorFormPdfUrl').value.trim();
+      if (!title || !pdfUrl) return;
+      var body = {
+        title: title,
+        description: document.getElementById('mentorFormDescription').value.trim(),
+        pdf_url: pdfUrl,
+        sort_order: parseInt(document.getElementById('mentorFormSortOrder').value, 10) || 0
+      };
+      try {
+        var url = id ? API + '/admin/mentor-resources/' + id : API + '/admin/mentor-resources';
+        var res = await fetch(url, { method: id ? 'PUT' : 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Save failed');
+        closeMentorModal();
+        loadMentorResources();
+      } catch (e) { alert('Failed to save'); }
+    }
+    document.getElementById('mentorModalSave').addEventListener('click', saveMentor);
+
+    async function deleteMentor(id) {
+      if (!confirm('Remove this mentor resource?')) return;
+      try {
+        var res = await fetch(API + '/admin/mentor-resources/' + id, { method: 'DELETE', headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Delete failed');
+        loadMentorResources();
+      } catch (e) { alert('Failed to delete'); }
+    }
+
+    async function loadCourseSignups() {
+      var tbody = document.getElementById('coursesignupsBody');
+      var empty = document.getElementById('coursesignupsEmpty');
+      if (!tbody || !empty) return;
+      try {
+        var res = await fetch(API + '/admin/course-signups', { headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (res.status === 503) {
+          tbody.innerHTML = '';
+          empty.textContent = 'Database not set up. On the server run: npm run init-db';
+          empty.classList.remove('hidden');
+          initIcons();
+          return;
+        }
+        var list = res.ok ? await res.json() : [];
+        var items = Array.isArray(list) ? list : [];
+        if (items.length === 0) {
+          tbody.innerHTML = '';
+          empty.classList.remove('hidden');
+        } else {
+          empty.classList.add('hidden');
+          tbody.innerHTML = items.map(function(s) {
+            var d = s.created_at ? new Date(s.created_at).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' }) : '—';
+            return '<tr><td>' + escapeHtml(d) + '</td><td>' + escapeHtml(s.name || '—') + '</td><td>' + escapeHtml(s.email || '—') + '</td><td>' + (s.age != null ? escapeHtml(String(s.age)) : '—') + '</td><td>' + escapeHtml(s.mobile_number || '—') + '</td></tr>';
+          }).join('');
+        }
+      } catch (e) { tbody.innerHTML = ''; empty.textContent = 'Failed to load'; empty.classList.remove('hidden'); }
+      initIcons();
     }
 
     if (token) {
