@@ -43,3 +43,24 @@ Backend repo: [Krish2728/c2r-mainPage-backend](https://github.com/Krish2728/c2r-
 
 - Backend and DB may spin down after inactivity; first request can be slow.
 - Use the backend URL in the frontend **VITE_API_URL** (and in CORS_ORIGIN on the backend).
+
+---
+
+## Troubleshooting: `getaddrinfo ENOTFOUND dpg-xxxxx-a`
+
+If the deploy fails with:
+
+```text
+Error: getaddrinfo ENOTFOUND dpg-d63rhru3jp1c73bb1hr0-a
+```
+
+the app is using Render’s **internal** database hostname, which can fail to resolve on free tier (e.g. private DNS or cold start). Use the **External** Database URL instead:
+
+1. In [Render Dashboard](https://dashboard.render.com), open your **PostgreSQL** service (`c2r-admin-db`).
+2. Go to **Connect** (or **Info** → connection URLs).
+3. Copy the **External Database URL** (host looks like `dpg-xxxxx.oregon-postgres.render.com`, not `dpg-xxxxx-a`).
+4. Open your **Web Service** (`c2r-admin-backend`) → **Environment**.
+5. Add or override **DATABASE_URL** and paste the **External** URL. Save.
+6. Redeploy the web service (or trigger a new deploy).
+
+After this, the app connects over the public hostname and SSL; no private DNS is required. Init-db also retries the connection a few times, which can help when the database is waking up.

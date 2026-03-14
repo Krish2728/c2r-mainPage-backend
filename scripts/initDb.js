@@ -139,9 +139,40 @@ CREATE INDEX IF NOT EXISTS idx_volunteer_submissions_email ON volunteer_submissi
 
 `;
 
+const MAX_RETRIES = 5;
+const RETRY_DELAY_MS = 5000;
+
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function initDb() {
   const bcrypt = require('bcryptjs');
-  const client = await pool.connect();
+  let client;
+  let lastErr;
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      client = await pool.connect();
+      lastErr = null;
+      break;
+    } catch (err) {
+      lastErr = err;
+      console.warn(
+        `Database connection attempt ${attempt}/${MAX_RETRIES} failed: ${err.message}`
+      );
+      if (attempt < MAX_RETRIES) {
+        console.warn(`Retrying in ${RETRY_DELAY_MS / 1000}s...`);
+        await sleep(RETRY_DELAY_MS);
+      }
+    }
+  }
+  if (lastErr || !client) {
+    console.error(
+      'Init DB error: Could not connect to database. If you see getaddrinfo ENOTFOUND with a host like dpg-xxx-a, use the External Database URL in Render: Dashboard → PostgreSQL → Connect → copy "External Database URL" → Web Service → Environment → set DATABASE_URL to that URL.'
+    );
+    console.error('Connection error:', lastErr);
+    process.exit(1);
+  }
   try {
     await client.query(schema);
     console.log('✅ Database schema initialized.');
