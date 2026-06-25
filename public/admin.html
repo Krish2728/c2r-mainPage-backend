@@ -178,7 +178,7 @@
         <div class="header-logo">C2R</div>
         <div>
           <h1 class="title">Admin Dashboard</h1>
-          <p class="subtitle">Emails, donations, videos, guides, reports & mentor resources</p>
+          <p class="subtitle">Emails, donations, videos, guides & mentor resources</p>
         </div>
       </div>
       <div class="adminInfo">
@@ -222,7 +222,6 @@
           <button type="button" data-tab="donations"><i data-lucide="wallet"></i> Donations</button>
           <button type="button" data-tab="videos"><i data-lucide="video"></i> Videos</button>
           <button type="button" data-tab="careers"><i data-lucide="book-open"></i> Career Guides</button>
-          <button type="button" data-tab="reports"><i data-lucide="file-down"></i> Annual Reports</button>
           <button type="button" data-tab="mentors"><i data-lucide="file-text"></i> For Mentors</button>
           <button type="button" data-tab="coursesignups"><i data-lucide="graduation-cap"></i> Course Signups</button>
         </div>
@@ -232,7 +231,6 @@
             <option value="donations">Donations</option>
             <option value="videos">Videos</option>
             <option value="careers">Career Guides</option>
-            <option value="reports">Annual Reports</option>
             <option value="mentors">For Mentors</option>
             <option value="coursesignups">Course Signups</option>
           </select>
@@ -308,16 +306,6 @@
           <div id="careersGrid" class="resourceGrid"></div>
           <div id="careersEmpty" class="muted hidden" style="padding:32px; text-align:center;">No career guides yet.</div>
         </div>
-        <div id="reportsTab" class="hidden">
-          <h3>Annual Reports</h3>
-          <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">PDFs shown on Resources → Annual Reports. Use a public link to the report.</p>
-          <div class="resourceToolbar">
-            <span></span>
-            <button type="button" class="btnAdd" id="addReportBtn"><i data-lucide="plus"></i> Add report</button>
-          </div>
-          <div id="reportsGrid" class="resourceGrid"></div>
-          <div id="reportsEmpty" class="muted hidden" style="padding:32px; text-align:center;">No annual reports yet.</div>
-        </div>
         <div id="mentorsTab" class="hidden">
           <h3>Resources for Mentors</h3>
           <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">PDFs shown on Resources → For Mentors. Use a public link to the resource.</p>
@@ -329,8 +317,8 @@
           <div id="mentorsEmpty" class="muted hidden" style="padding:32px; text-align:center;">No mentor resources yet.</div>
         </div>
         <div id="coursesignupsTab" class="hidden">
-          <h3>Free course signups</h3>
-          <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">People who signed up or signed in to access free courses on the Resources page.</p>
+          <h3>Course signups</h3>
+          <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">People who signed up or signed in to access courses on the Resources page.</p>
           <div class="tableWrap">
             <table>
               <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Age</th><th>Mobile</th></tr></thead>
@@ -415,27 +403,6 @@
         <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
           <button type="button" id="careerModalCancel" style="padding:10px 18px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-weight:500;">Cancel</button>
           <button type="button" class="btnAdd" id="careerModalSave" style="padding:10px 18px;">Save</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="reportModal" class="modal-overlay hidden" aria-hidden="true">
-    <div class="modal videoModal" role="dialog" style="max-width: 480px;">
-      <div class="modal-header">
-        <h2 id="reportModalTitle">Add annual report</h2>
-        <button type="button" class="modal-close" id="reportModalClose" aria-label="Close">&times;</button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="reportFormId" value="" />
-        <div class="form-group"><label class="form-label" for="reportFormYear">Year</label><input type="text" id="reportFormYear" class="form-input" placeholder="e.g. 2024" /></div>
-        <div class="form-group"><label class="form-label" for="reportFormTitle">Title</label><input type="text" id="reportFormTitle" class="form-input" placeholder="e.g. Annual Report 2024" /></div>
-        <div class="form-group"><label class="form-label" for="reportFormDescription">Description</label><input type="text" id="reportFormDescription" class="form-input" placeholder="Short description" /></div>
-        <div class="form-group"><label class="form-label" for="reportFormPdfUrl">PDF URL</label><input type="url" id="reportFormPdfUrl" class="form-input" placeholder="https://..." /></div>
-        <div class="form-group"><label class="form-label" for="reportFormSortOrder">Sort order</label><input type="number" id="reportFormSortOrder" class="form-input" value="0" /></div>
-        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
-          <button type="button" id="reportModalCancel" style="padding:10px 18px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-weight:500;">Cancel</button>
-          <button type="button" class="btnAdd" id="reportModalSave" style="padding:10px 18px;">Save</button>
         </div>
       </div>
     </div>
@@ -766,7 +733,6 @@
       else if (!document.getElementById('volunteerModal').classList.contains('hidden')) closeVolunteerModal();
       else if (!document.getElementById('videoModal').classList.contains('hidden')) closeVideoModal();
       else if (!document.getElementById('careerModal').classList.contains('hidden')) closeCareerModal();
-      else if (!document.getElementById('reportModal').classList.contains('hidden')) closeReportModal();
       else if (!document.getElementById('mentorModal').classList.contains('hidden')) closeMentorModal();
     });
     function switchTab(tab) {
@@ -779,12 +745,10 @@
       document.getElementById('donationsTab').classList.toggle('hidden', tab !== 'donations');
       document.getElementById('videosTab').classList.toggle('hidden', tab !== 'videos');
       document.getElementById('careersTab').classList.toggle('hidden', tab !== 'careers');
-      document.getElementById('reportsTab').classList.toggle('hidden', tab !== 'reports');
       document.getElementById('mentorsTab').classList.toggle('hidden', tab !== 'mentors');
       document.getElementById('coursesignupsTab').classList.toggle('hidden', tab !== 'coursesignups');
         if (tab === 'videos') loadVideos();
         if (tab === 'careers') loadCareerGuides();
-        if (tab === 'reports') loadAnnualReports();
         if (tab === 'mentors') loadMentorResources();
         if (tab === 'coursesignups') loadCourseSignups();
         initIcons();
@@ -1037,109 +1001,6 @@
         if (res.status === 401) { logout(); return; }
         if (!res.ok) throw new Error('Delete failed');
         loadCareerGuides();
-      } catch (e) { alert('Failed to delete'); }
-    }
-
-    async function loadAnnualReports() {
-      var grid = document.getElementById('reportsGrid');
-      var empty = document.getElementById('reportsEmpty');
-      try {
-        var res = await fetch(API + '/admin/annual-reports', { headers: authHeaders() });
-        if (res.status === 401) { logout(); return; }
-        if (res.status === 503) {
-          grid.innerHTML = '';
-          empty.textContent = 'Database not set up. On the server run: npm run init-db';
-          empty.classList.remove('hidden');
-          initIcons();
-          return;
-        }
-        var list = res.ok ? await res.json() : [];
-        var items = Array.isArray(list) ? list : [];
-        if (items.length === 0) {
-          grid.innerHTML = '';
-          empty.textContent = 'No annual reports yet. Add one above.';
-          empty.classList.remove('hidden');
-        } else {
-          empty.classList.add('hidden');
-          grid.innerHTML = items.map(function(r) {
-            var desc = escapeHtml((r.description || '—').slice(0, 100)) + ((r.description || '').length > 100 ? '…' : '');
-            return '<div class="resourceCard" data-id="' + r.id + '">' +
-              '<p class="resourceCardTitle">' + escapeHtml(r.year) + ' – ' + escapeHtml(r.title) + '</p>' +
-              '<p class="resourceCardMeta">Order: ' + (r.sort_order ?? 0) + '</p>' +
-              '<p class="resourceCardDesc">' + desc + '</p>' +
-              '<div class="resourceCardActions">' +
-              '<a href="' + escapeHtml(r.pdf_url) + '" target="_blank" rel="noopener">PDF</a>' +
-              '<button type="button" class="editReport">Edit</button>' +
-              '<button type="button" class="deleteReport delete">Delete</button></div></div>';
-          }).join('');
-          grid.querySelectorAll('.editReport').forEach(function(btn) {
-            btn.addEventListener('click', function() { openReportModal(items.find(function(r) { return r.id === parseInt(btn.closest('.resourceCard').dataset.id, 10); })); });
-          });
-          grid.querySelectorAll('.deleteReport').forEach(function(btn) {
-            btn.addEventListener('click', function() { deleteReport(parseInt(btn.closest('.resourceCard').dataset.id, 10)); });
-          });
-        }
-      } catch (e) { grid.innerHTML = ''; empty.textContent = 'Failed to load'; empty.classList.remove('hidden'); }
-      initIcons();
-    }
-
-    function openReportModal(r) {
-      document.getElementById('reportModalTitle').textContent = r ? 'Edit annual report' : 'Add annual report';
-      document.getElementById('reportFormId').value = r ? r.id : '';
-      document.getElementById('reportFormYear').value = r ? r.year : new Date().getFullYear();
-      document.getElementById('reportFormTitle').value = r ? r.title : '';
-      document.getElementById('reportFormDescription').value = r ? (r.description || '') : '';
-      document.getElementById('reportFormPdfUrl').value = r ? r.pdf_url : '';
-      document.getElementById('reportFormSortOrder').value = r ? (r.sort_order ?? 0) : document.getElementById('reportsGrid').querySelectorAll('.resourceCard').length;
-      var el = document.getElementById('reportModal');
-      el.classList.remove('hidden');
-      el.setAttribute('aria-hidden', 'false');
-      setTimeout(function() { document.getElementById('reportFormYear').focus(); }, 0);
-    }
-    function closeReportModal() {
-      var el = document.getElementById('reportModal');
-      if (document.activeElement && el.contains(document.activeElement)) {
-        var btn = document.getElementById('addReportBtn');
-        if (btn) btn.focus(); else document.activeElement.blur();
-      }
-      el.classList.add('hidden');
-      el.setAttribute('aria-hidden', 'true');
-    }
-    document.getElementById('addReportBtn').addEventListener('click', function() { openReportModal(null); });
-    document.getElementById('reportModalClose').addEventListener('click', closeReportModal);
-    document.getElementById('reportModalCancel').addEventListener('click', closeReportModal);
-    document.getElementById('reportModal').addEventListener('click', function(ev) { if (ev.target === this) closeReportModal(); });
-
-    async function saveReport() {
-      var id = document.getElementById('reportFormId').value;
-      var title = document.getElementById('reportFormTitle').value.trim();
-      var pdfUrl = document.getElementById('reportFormPdfUrl').value.trim();
-      if (!title || !pdfUrl) return;
-      var body = {
-        year: document.getElementById('reportFormYear').value.trim() || String(new Date().getFullYear()),
-        title: title,
-        description: document.getElementById('reportFormDescription').value.trim(),
-        pdf_url: pdfUrl,
-        sort_order: parseInt(document.getElementById('reportFormSortOrder').value, 10) || 0
-      };
-      try {
-        var url = id ? API + '/admin/annual-reports/' + id : API + '/admin/annual-reports';
-        var res = await fetch(url, { method: id ? 'PUT' : 'POST', headers: authHeaders(), body: JSON.stringify(body) });
-        if (res.status === 401) { logout(); return; }
-        if (!res.ok) throw new Error('Save failed');
-        closeReportModal();
-        loadAnnualReports();
-      } catch (e) { alert('Failed to save'); }
-    }
-    document.getElementById('reportModalSave').addEventListener('click', saveReport);
-
-    async function deleteReport(id) {
-      if (!confirm('Remove this annual report?')) return;
-      try {
-        var res = await fetch(API + '/admin/annual-reports/' + id, { method: 'DELETE', headers: authHeaders() });
-        if (res.status === 401) { logout(); return; }
-        if (!res.ok) throw new Error('Delete failed');
-        loadAnnualReports();
       } catch (e) { alert('Failed to delete'); }
     }
 

@@ -9,7 +9,6 @@ const {
 } = require("../controllers/adminController");
 const resourceVideoController = require("../controllers/resourceVideoController");
 const careerGuideController = require("../controllers/careerGuideController");
-const annualReportController = require("../controllers/annualReportController");
 const mentorResourceController = require("../controllers/mentorResourceController");
 const courseSignupController = require("../controllers/courseSignupController");
 const { authenticateAdmin } = require("../middlewares/auth");
@@ -32,11 +31,6 @@ router.get("/career-guides", authenticateAdmin, careerGuideController.listAdmin)
 router.post("/career-guides", authenticateAdmin, careerGuideController.create);
 router.put("/career-guides/:id", authenticateAdmin, careerGuideController.update);
 router.delete("/career-guides/:id", authenticateAdmin, careerGuideController.remove);
-
-router.get("/annual-reports", authenticateAdmin, annualReportController.listAdmin);
-router.post("/annual-reports", authenticateAdmin, annualReportController.create);
-router.put("/annual-reports/:id", authenticateAdmin, annualReportController.update);
-router.delete("/annual-reports/:id", authenticateAdmin, annualReportController.remove);
 
 router.get("/mentor-resources", authenticateAdmin, mentorResourceController.listAdmin);
 router.post("/mentor-resources", authenticateAdmin, mentorResourceController.create);
