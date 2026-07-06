@@ -74,6 +74,18 @@ CREATE TABLE IF NOT EXISTS career_guides (
 );
 CREATE INDEX IF NOT EXISTS idx_career_guides_sort ON career_guides(sort_order);
 
+-- Annual reports (Resources page – Annual Reports tab) – admin-managed
+CREATE TABLE IF NOT EXISTS annual_reports (
+  id SERIAL PRIMARY KEY,
+  year VARCHAR(20) NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  pdf_url VARCHAR(1024) NOT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_annual_reports_sort ON annual_reports(sort_order);
+
 -- Mentor resources (Resources page – For Mentors tab) – admin-managed
 CREATE TABLE IF NOT EXISTS mentor_resources (
   id SERIAL PRIMARY KEY,
@@ -85,7 +97,7 @@ CREATE TABLE IF NOT EXISTS mentor_resources (
 );
 CREATE INDEX IF NOT EXISTS idx_mentor_resources_sort ON mentor_resources(sort_order);
 
--- Course signups (Resources page – sign in/sign up for courses; visible to admin)
+-- Free course signups (Resources page – sign in/sign up for free courses; visible to admin)
 CREATE TABLE IF NOT EXISTS course_signups (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
@@ -125,33 +137,63 @@ CREATE TABLE IF NOT EXISTS volunteer_submissions (
 CREATE INDEX IF NOT EXISTS idx_volunteer_submissions_created_at ON volunteer_submissions(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_volunteer_submissions_email ON volunteer_submissions(email);
 
--- Lifetime membership applications (Get Involved – Lifetime Membership page)
-CREATE TABLE IF NOT EXISTS lifetime_membership_submissions (
+-- Donation campaigns (KindKart-style; admin-managed)
+CREATE TABLE IF NOT EXISTS donation_campaigns (
   id SERIAL PRIMARY KEY,
-  email VARCHAR(255) NOT NULL,
-  full_name VARCHAR(255) NOT NULL,
-  gender VARCHAR(50),
-  mobile_no VARCHAR(50),
-  date_of_birth DATE,
-  current_address TEXT,
-  native_city_village VARCHAR(255),
-  languages VARCHAR(255),
-  current_company_org VARCHAR(255),
-  designation VARCHAR(255),
-  linkedin_profile VARCHAR(1024),
-  years_of_experience VARCHAR(100),
-  has_volunteered_before VARCHAR(10),
-  highest_qualification VARCHAR(255),
-  how_can_you_contribute TEXT,
-  preferred_areas_mentoring TEXT,
-  hours_per_week VARCHAR(100),
-  preferred_days VARCHAR(100),
-  preferred_timings VARCHAR(100),
-  identity_number VARCHAR(255),
+  slug VARCHAR(140) UNIQUE NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  short_description TEXT DEFAULT '',
+  full_story TEXT DEFAULT '',
+  cover_image_url VARCHAR(1024) DEFAULT '',
+  category VARCHAR(100) DEFAULT 'education',
+  location VARCHAR(255) DEFAULT '',
+  beneficiary_label VARCHAR(255) DEFAULT '',
+  goal_amount_paise BIGINT NOT NULL DEFAULT 0,
+  raised_amount_paise BIGINT NOT NULL DEFAULT 0,
+  donor_count INT NOT NULL DEFAULT 0,
+  status VARCHAR(50) NOT NULL DEFAULT 'draft',
+  is_featured BOOLEAN NOT NULL DEFAULT false,
+  is_urgent BOOLEAN NOT NULL DEFAULT false,
+  preset_amounts JSONB DEFAULT '[]'::jsonb,
+  published_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS campaign_cost_items (
+  id SERIAL PRIMARY KEY,
+  campaign_id INT NOT NULL REFERENCES donation_campaigns(id) ON DELETE CASCADE,
+  item_name VARCHAR(255) NOT NULL,
+  description TEXT DEFAULT '',
+  quantity INT NOT NULL DEFAULT 1,
+  unit_cost_paise BIGINT NOT NULL DEFAULT 0,
+  total_cost_paise BIGINT NOT NULL DEFAULT 0,
+  priority INT NOT NULL DEFAULT 1,
+  sort_order INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS campaign_proofs (
+  id SERIAL PRIMARY KEY,
+  campaign_id INT NOT NULL REFERENCES donation_campaigns(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  description TEXT DEFAULT '',
+  proof_type VARCHAR(50) DEFAULT 'photo',
+  media_url VARCHAR(1024) NOT NULL,
+  amount_attributed_paise BIGINT,
+  visible_to_public BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_lifetime_membership_submissions_created_at ON lifetime_membership_submissions(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_lifetime_membership_submissions_email ON lifetime_membership_submissions(email);
+
+CREATE INDEX IF NOT EXISTS idx_donation_campaigns_status ON donation_campaigns(status);
+CREATE INDEX IF NOT EXISTS idx_donation_campaigns_slug ON donation_campaigns(slug);
+CREATE INDEX IF NOT EXISTS idx_campaign_cost_items_campaign ON campaign_cost_items(campaign_id);
+CREATE INDEX IF NOT EXISTS idx_campaign_proofs_campaign ON campaign_proofs(campaign_id);
+
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS campaign_id INT REFERENCES donation_campaigns(id);
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS razorpay_order_id VARCHAR(255);
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS razorpay_payment_id VARCHAR(255);
+CREATE INDEX IF NOT EXISTS idx_donations_campaign_id ON donations(campaign_id);
+CREATE INDEX IF NOT EXISTS idx_donations_razorpay_order ON donations(razorpay_order_id);
 
 `;
 
