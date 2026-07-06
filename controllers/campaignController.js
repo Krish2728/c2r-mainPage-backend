@@ -1,4 +1,4 @@
-const { query } = require("../config/db");
+const { query, pool } = require("../config/db");
 const { normalizeCategory } = require("../constants/campaignSections");
 
 function slugify(text) {
@@ -393,16 +393,37 @@ const publish = async (req, res) => {
 };
 
 const remove = async (req, res) => {
+	const client = await pool.connect();
 	try {
 		const { id } = req.params;
-		const result = await query("DELETE FROM donation_campaigns WHERE id = $1 RETURNING id", [id]);
+		await client.query("BEGIN");
+		// Donations reference campaigns without ON DELETE SET NULL on older DBs — unlink first.
+		await client.query("UPDATE donations SET campaign_id = NULL WHERE campaign_id = $1", [id]);
+		const result = await client.query(
+			"DELETE FROM donation_campaigns WHERE id = $1 RETURNING id",
+			[id]
+		);
 		if (!result.rows.length) {
+			await client.query("ROLLBACK");
 			return res.status(404).json({ message: "Campaign not found" });
 		}
+		await client.query("COMMIT");
 		res.status(204).send();
 	} catch (err) {
+		try {
+			await client.query("ROLLBACK");
+		} catch (_) {
+			/* no active transaction */
+		}
 		console.error("Delete campaign error:", err);
-		res.status(500).json({ message: "Failed to delete campaign" });
+		const isFkViolation = err.code === "23503";
+		res.status(500).json({
+			message: isFkViolation
+				? "Cannot delete campaign while linked records still reference it."
+				: "Failed to delete campaign",
+		});
+	} finally {
+		client.release();
 	}
 };
 

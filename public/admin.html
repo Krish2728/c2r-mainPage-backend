@@ -1441,9 +1441,12 @@
       try {
         var res = await fetch(API + '/admin/campaigns/' + id, { method: 'DELETE', headers: authHeaders() });
         if (res.status === 401) { logout(); return; }
-        if (!res.ok) throw new Error('Delete failed');
+        if (!res.ok) {
+          var errBody = await res.json().catch(function() { return {}; });
+          throw new Error(errBody.message || 'Delete failed');
+        }
         loadCampaigns();
-      } catch (e) { alert('Failed to delete'); }
+      } catch (e) { alert('Failed to delete: ' + (e.message || 'Unknown error')); }
     }
 
     async function addCampaignProof() {

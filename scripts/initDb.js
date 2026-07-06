@@ -233,6 +233,11 @@ async function initDb() {
   }
   try {
     await client.query(schema);
+    await client.query(`
+      ALTER TABLE donations DROP CONSTRAINT IF EXISTS donations_campaign_id_fkey;
+      ALTER TABLE donations ADD CONSTRAINT donations_campaign_id_fkey
+        FOREIGN KEY (campaign_id) REFERENCES donation_campaigns(id) ON DELETE SET NULL;
+    `);
     console.log('✅ Database schema initialized.');
     const hash = await bcrypt.hash('admin123', 10);
     const res = await client.query(
