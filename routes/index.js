@@ -8,8 +8,10 @@ const donationRoutes = require("./donationRoutes");
 const adminRoutes = require("./adminRoutes");
 const resourceVideoRoutes = require("./resourceVideoRoutes");
 const careerGuideRoutes = require("./careerGuideRoutes");
+const annualReportRoutes = require("./annualReportRoutes");
 const mentorResourceRoutes = require("./mentorResourceRoutes");
 const courseSignupRoutes = require("./courseSignupRoutes");
+const campaignRoutes = require("./campaignRoutes");
 
 const router = express.Router();
 
@@ -19,8 +21,10 @@ router.use("/volunteer", volunteerRoutes);
 router.use("/lifetime-membership", lifetimeMembershipRoutes);
 router.use("/mentor-application", mentorApplicationRoutes);
 router.use("/donations", donationRoutes);
+router.use("/campaigns", campaignRoutes);
 router.use("/resource-videos", resourceVideoRoutes);
 router.use("/career-guides", careerGuideRoutes);
+router.use("/annual-reports", annualReportRoutes);
 router.use("/mentor-resources", mentorResourceRoutes);
 router.use("/course-signups", courseSignupRoutes);
 router.use("/admin", adminRoutes);
