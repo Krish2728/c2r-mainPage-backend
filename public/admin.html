@@ -178,7 +178,7 @@
         <div class="header-logo">C2R</div>
         <div>
           <h1 class="title">Admin Dashboard</h1>
-          <p class="subtitle">Emails, donations, videos, guides & mentor resources</p>
+          <p class="subtitle">Emails, donations, videos, guides, reports & mentor resources</p>
         </div>
       </div>
       <div class="adminInfo">
@@ -220,8 +220,10 @@
         <div class="tabs">
           <button type="button" class="active" data-tab="emails"><i data-lucide="inbox"></i> Mails</button>
           <button type="button" data-tab="donations"><i data-lucide="wallet"></i> Donations</button>
+          <button type="button" data-tab="campaigns"><i data-lucide="heart-handshake"></i> Campaigns</button>
           <button type="button" data-tab="videos"><i data-lucide="video"></i> Videos</button>
           <button type="button" data-tab="careers"><i data-lucide="book-open"></i> Career Guides</button>
+          <button type="button" data-tab="reports"><i data-lucide="file-down"></i> Annual Reports</button>
           <button type="button" data-tab="mentors"><i data-lucide="file-text"></i> For Mentors</button>
           <button type="button" data-tab="coursesignups"><i data-lucide="graduation-cap"></i> Course Signups</button>
         </div>
@@ -229,8 +231,10 @@
           <select id="tabSelect">
             <option value="emails">Mails</option>
             <option value="donations">Donations</option>
+            <option value="campaigns">Campaigns</option>
             <option value="videos">Videos</option>
             <option value="careers">Career Guides</option>
+            <option value="reports">Annual Reports</option>
             <option value="mentors">For Mentors</option>
             <option value="coursesignups">Course Signups</option>
           </select>
@@ -279,12 +283,24 @@
         </div>
         <div id="donationsTab" class="hidden">
           <h3>Donations</h3>
+          <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">Successful payments only. Abandoned or incomplete checkouts are not listed.</p>
           <div class="tableWrap">
             <table>
               <thead><tr><th>Date</th><th>Donor</th><th>Email</th><th>Amount</th><th>Status</th></tr></thead>
               <tbody id="donationsBody"></tbody>
             </table>
           </div>
+        </div>
+        <div id="campaignsTab" class="hidden">
+          <div class="resourceToolbar">
+            <div>
+              <h3 style="margin:0;">Donation campaigns</h3>
+              <p style="margin:6px 0 0 0; color:#64748b; font-size:14px;">Create draft campaigns, add proofs, mark urgent, then publish to show on /donate.</p>
+            </div>
+            <button type="button" class="btnAdd" id="addCampaignBtn"><i data-lucide="plus"></i> New campaign</button>
+          </div>
+          <div id="campaignsGrid" class="resourceGrid"></div>
+          <div id="campaignsEmpty" class="muted hidden" style="padding:32px; text-align:center;">No campaigns yet. Create one to get started.</div>
         </div>
         <div id="videosTab" class="hidden">
           <h3>Resource Videos</h3>
@@ -306,6 +322,16 @@
           <div id="careersGrid" class="resourceGrid"></div>
           <div id="careersEmpty" class="muted hidden" style="padding:32px; text-align:center;">No career guides yet.</div>
         </div>
+        <div id="reportsTab" class="hidden">
+          <h3>Annual Reports</h3>
+          <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">PDFs shown on Resources → Annual Reports. Use a public link to the report.</p>
+          <div class="resourceToolbar">
+            <span></span>
+            <button type="button" class="btnAdd" id="addReportBtn"><i data-lucide="plus"></i> Add report</button>
+          </div>
+          <div id="reportsGrid" class="resourceGrid"></div>
+          <div id="reportsEmpty" class="muted hidden" style="padding:32px; text-align:center;">No annual reports yet.</div>
+        </div>
         <div id="mentorsTab" class="hidden">
           <h3>Resources for Mentors</h3>
           <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">PDFs shown on Resources → For Mentors. Use a public link to the resource.</p>
@@ -317,8 +343,8 @@
           <div id="mentorsEmpty" class="muted hidden" style="padding:32px; text-align:center;">No mentor resources yet.</div>
         </div>
         <div id="coursesignupsTab" class="hidden">
-          <h3>Course signups</h3>
-          <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">People who signed up or signed in to access courses on the Resources page.</p>
+          <h3>Free course signups</h3>
+          <p style="margin:0 0 16px 0; color:#64748b; font-size:14px;">People who signed up or signed in to access free courses on the Resources page.</p>
           <div class="tableWrap">
             <table>
               <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Age</th><th>Mobile</th></tr></thead>
@@ -408,6 +434,27 @@
     </div>
   </div>
 
+  <div id="reportModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal videoModal" role="dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <h2 id="reportModalTitle">Add annual report</h2>
+        <button type="button" class="modal-close" id="reportModalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="reportFormId" value="" />
+        <div class="form-group"><label class="form-label" for="reportFormYear">Year</label><input type="text" id="reportFormYear" class="form-input" placeholder="e.g. 2024" /></div>
+        <div class="form-group"><label class="form-label" for="reportFormTitle">Title</label><input type="text" id="reportFormTitle" class="form-input" placeholder="e.g. Annual Report 2024" /></div>
+        <div class="form-group"><label class="form-label" for="reportFormDescription">Description</label><input type="text" id="reportFormDescription" class="form-input" placeholder="Short description" /></div>
+        <div class="form-group"><label class="form-label" for="reportFormPdfUrl">PDF URL</label><input type="url" id="reportFormPdfUrl" class="form-input" placeholder="https://..." /></div>
+        <div class="form-group"><label class="form-label" for="reportFormSortOrder">Sort order</label><input type="number" id="reportFormSortOrder" class="form-input" value="0" /></div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+          <button type="button" id="reportModalCancel" style="padding:10px 18px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-weight:500;">Cancel</button>
+          <button type="button" class="btnAdd" id="reportModalSave" style="padding:10px 18px;">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="mentorModal" class="modal-overlay hidden" aria-hidden="true">
     <div class="modal videoModal" role="dialog" style="max-width: 480px;">
       <div class="modal-header">
@@ -423,6 +470,44 @@
         <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
           <button type="button" id="mentorModalCancel" style="padding:10px 18px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-weight:500;">Cancel</button>
           <button type="button" class="btnAdd" id="mentorModalSave" style="padding:10px 18px;">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="campaignModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal videoModal" role="dialog" style="max-width: 640px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h2 id="campaignModalTitle">Campaign</h2>
+        <button type="button" class="modal-close" id="campaignModalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="campaignFormId" value="" />
+        <div class="form-group"><label class="form-label" for="campaignFormTitle">Title *</label><input type="text" id="campaignFormTitle" class="form-input" /></div>
+        <div class="form-group"><label class="form-label" for="campaignFormSlug">Slug</label><input type="text" id="campaignFormSlug" class="form-input" placeholder="auto-generated if empty" /></div>
+        <div class="form-group"><label class="form-label" for="campaignFormShortDesc">Short description</label><input type="text" id="campaignFormShortDesc" class="form-input" /></div>
+        <div class="form-group"><label class="form-label" for="campaignFormStory">Full story</label><textarea id="campaignFormStory" class="form-input" rows="4" style="resize:vertical;"></textarea></div>
+        <div class="form-group"><label class="form-label" for="campaignFormCover">Cover image URL</label><input type="url" id="campaignFormCover" class="form-input" placeholder="https://..." /></div>
+        <div class="form-group"><label class="form-label" for="campaignFormCategory">Section</label><select id="campaignFormCategory" class="form-input"><option value="scholarship">Scholarship</option><option value="youth">Youth &amp; Students</option><option value="mentorship">Mentorship</option><option value="skills">Skills Training</option><option value="livelihood">Livelihood</option><option value="health">Health</option><option value="education" selected>Education</option></select><p style="margin:6px 0 0 0; font-size:12px; color:#64748b;">Choose which section this campaign appears under on the donate page. Use &quot;Mark as urgent&quot; to also show on the homepage.</p></div>
+        <div class="form-group"><label class="form-label" for="campaignFormLocation">Location</label><input type="text" id="campaignFormLocation" class="form-input" /></div>
+        <div class="form-group"><label class="form-label" for="campaignFormBeneficiary">Beneficiary label</label><input type="text" id="campaignFormBeneficiary" class="form-input" placeholder="e.g. 50 students" /></div>
+        <div class="form-group"><label class="form-label" for="campaignFormGoal">Goal amount (₹)</label><input type="number" id="campaignFormGoal" class="form-input" min="500" value="50000" /></div>
+        <div class="form-group"><label class="form-label" for="campaignFormPresets">Preset amounts (one per line: amount|label)</label><textarea id="campaignFormPresets" class="form-input" rows="3" placeholder="500|One session&#10;1000|Weekly mentorship"></textarea></div>
+        <div class="form-group" style="display:flex; gap:16px; flex-wrap:wrap;">
+          <label style="display:flex; align-items:center; gap:8px; font-size:14px;"><input type="checkbox" id="campaignFormUrgent" /> Mark as urgent (homepage)</label>
+          <label style="display:flex; align-items:center; gap:8px; font-size:14px;"><input type="checkbox" id="campaignFormFeatured" /> Featured</label>
+        </div>
+        <div id="campaignProofSection" class="hidden" style="margin-top:20px; padding-top:16px; border-top:1px solid #e2e8f0;">
+          <h4 style="margin:0 0 12px 0; font-size:15px;">Add proof photo</h4>
+          <div class="form-group"><label class="form-label" for="proofFormTitle">Proof title</label><input type="text" id="proofFormTitle" class="form-input" /></div>
+          <div class="form-group"><label class="form-label" for="proofFormUrl">Image URL</label><input type="url" id="proofFormUrl" class="form-input" placeholder="https://..." /></div>
+          <button type="button" class="btnAdd" id="addProofBtn" style="margin-bottom:12px;">Add proof</button>
+          <div id="proofList" style="font-size:13px; color:#475569;"></div>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px; flex-wrap:wrap;">
+          <button type="button" id="campaignModalCancel" style="padding:10px 18px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-weight:500;">Cancel</button>
+          <button type="button" id="campaignPublishBtn" class="btnAdd hidden" style="padding:10px 18px; background:#2563eb;">Publish</button>
+          <button type="button" class="btnAdd" id="campaignModalSave" style="padding:10px 18px;">Save</button>
         </div>
       </div>
     </div>
@@ -703,12 +788,12 @@
 
     async function loadDonations() {
       try {
-        const res = await fetch(API + '/admin/donations?limit=200', { headers: authHeaders() });
+        const res = await fetch(API + '/admin/donations?status=completed&limit=200', { headers: authHeaders() });
         const data = await res.json();
         if (!res.ok) return;
         donationsBody.innerHTML = data.donations.length === 0
-          ? '<tr><td colspan="5" class="muted">No donations yet</td></tr>'
-          : data.donations.map(d => '<tr><td>' + new Date(d.created_at).toLocaleString() + '</td><td>' + escapeHtml(d.donor_name) + '</td><td>' + escapeHtml(d.donor_email) + '</td><td>₹' + (d.amount_display || 0).toLocaleString() + '</td><td>' + d.status + '</td></tr>').join('');
+          ? '<tr><td colspan="5" class="muted">No successful donations yet</td></tr>'
+          : data.donations.map(d => '<tr><td>' + new Date(d.completed_at || d.created_at).toLocaleString() + '</td><td>' + escapeHtml(d.donor_name) + '</td><td>' + escapeHtml(d.donor_email) + '</td><td>₹' + (d.amount_display || 0).toLocaleString() + '</td><td>' + escapeHtml(d.status) + '</td></tr>').join('');
       } catch (e) { donationsBody.innerHTML = '<tr><td colspan="5">Failed to load</td></tr>'; }
     }
 
@@ -733,7 +818,9 @@
       else if (!document.getElementById('volunteerModal').classList.contains('hidden')) closeVolunteerModal();
       else if (!document.getElementById('videoModal').classList.contains('hidden')) closeVideoModal();
       else if (!document.getElementById('careerModal').classList.contains('hidden')) closeCareerModal();
+      else if (!document.getElementById('reportModal').classList.contains('hidden')) closeReportModal();
       else if (!document.getElementById('mentorModal').classList.contains('hidden')) closeMentorModal();
+      else if (!document.getElementById('campaignModal').classList.contains('hidden')) closeCampaignModal();
     });
     function switchTab(tab) {
       document.querySelectorAll('.tabs button').forEach(b => {
@@ -743,12 +830,16 @@
       if (sel) sel.value = tab;
       document.getElementById('emailsTab').classList.toggle('hidden', tab !== 'emails');
       document.getElementById('donationsTab').classList.toggle('hidden', tab !== 'donations');
+      document.getElementById('campaignsTab').classList.toggle('hidden', tab !== 'campaigns');
       document.getElementById('videosTab').classList.toggle('hidden', tab !== 'videos');
       document.getElementById('careersTab').classList.toggle('hidden', tab !== 'careers');
+      document.getElementById('reportsTab').classList.toggle('hidden', tab !== 'reports');
       document.getElementById('mentorsTab').classList.toggle('hidden', tab !== 'mentors');
       document.getElementById('coursesignupsTab').classList.toggle('hidden', tab !== 'coursesignups');
+        if (tab === 'campaigns') loadCampaigns();
         if (tab === 'videos') loadVideos();
         if (tab === 'careers') loadCareerGuides();
+        if (tab === 'reports') loadAnnualReports();
         if (tab === 'mentors') loadMentorResources();
         if (tab === 'coursesignups') loadCourseSignups();
         initIcons();
@@ -1004,6 +1095,109 @@
       } catch (e) { alert('Failed to delete'); }
     }
 
+    async function loadAnnualReports() {
+      var grid = document.getElementById('reportsGrid');
+      var empty = document.getElementById('reportsEmpty');
+      try {
+        var res = await fetch(API + '/admin/annual-reports', { headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (res.status === 503) {
+          grid.innerHTML = '';
+          empty.textContent = 'Database not set up. On the server run: npm run init-db';
+          empty.classList.remove('hidden');
+          initIcons();
+          return;
+        }
+        var list = res.ok ? await res.json() : [];
+        var items = Array.isArray(list) ? list : [];
+        if (items.length === 0) {
+          grid.innerHTML = '';
+          empty.textContent = 'No annual reports yet. Add one above.';
+          empty.classList.remove('hidden');
+        } else {
+          empty.classList.add('hidden');
+          grid.innerHTML = items.map(function(r) {
+            var desc = escapeHtml((r.description || '—').slice(0, 100)) + ((r.description || '').length > 100 ? '…' : '');
+            return '<div class="resourceCard" data-id="' + r.id + '">' +
+              '<p class="resourceCardTitle">' + escapeHtml(r.year) + ' – ' + escapeHtml(r.title) + '</p>' +
+              '<p class="resourceCardMeta">Order: ' + (r.sort_order ?? 0) + '</p>' +
+              '<p class="resourceCardDesc">' + desc + '</p>' +
+              '<div class="resourceCardActions">' +
+              '<a href="' + escapeHtml(r.pdf_url) + '" target="_blank" rel="noopener">PDF</a>' +
+              '<button type="button" class="editReport">Edit</button>' +
+              '<button type="button" class="deleteReport delete">Delete</button></div></div>';
+          }).join('');
+          grid.querySelectorAll('.editReport').forEach(function(btn) {
+            btn.addEventListener('click', function() { openReportModal(items.find(function(r) { return r.id === parseInt(btn.closest('.resourceCard').dataset.id, 10); })); });
+          });
+          grid.querySelectorAll('.deleteReport').forEach(function(btn) {
+            btn.addEventListener('click', function() { deleteReport(parseInt(btn.closest('.resourceCard').dataset.id, 10)); });
+          });
+        }
+      } catch (e) { grid.innerHTML = ''; empty.textContent = 'Failed to load'; empty.classList.remove('hidden'); }
+      initIcons();
+    }
+
+    function openReportModal(r) {
+      document.getElementById('reportModalTitle').textContent = r ? 'Edit annual report' : 'Add annual report';
+      document.getElementById('reportFormId').value = r ? r.id : '';
+      document.getElementById('reportFormYear').value = r ? r.year : new Date().getFullYear();
+      document.getElementById('reportFormTitle').value = r ? r.title : '';
+      document.getElementById('reportFormDescription').value = r ? (r.description || '') : '';
+      document.getElementById('reportFormPdfUrl').value = r ? r.pdf_url : '';
+      document.getElementById('reportFormSortOrder').value = r ? (r.sort_order ?? 0) : document.getElementById('reportsGrid').querySelectorAll('.resourceCard').length;
+      var el = document.getElementById('reportModal');
+      el.classList.remove('hidden');
+      el.setAttribute('aria-hidden', 'false');
+      setTimeout(function() { document.getElementById('reportFormYear').focus(); }, 0);
+    }
+    function closeReportModal() {
+      var el = document.getElementById('reportModal');
+      if (document.activeElement && el.contains(document.activeElement)) {
+        var btn = document.getElementById('addReportBtn');
+        if (btn) btn.focus(); else document.activeElement.blur();
+      }
+      el.classList.add('hidden');
+      el.setAttribute('aria-hidden', 'true');
+    }
+    document.getElementById('addReportBtn').addEventListener('click', function() { openReportModal(null); });
+    document.getElementById('reportModalClose').addEventListener('click', closeReportModal);
+    document.getElementById('reportModalCancel').addEventListener('click', closeReportModal);
+    document.getElementById('reportModal').addEventListener('click', function(ev) { if (ev.target === this) closeReportModal(); });
+
+    async function saveReport() {
+      var id = document.getElementById('reportFormId').value;
+      var title = document.getElementById('reportFormTitle').value.trim();
+      var pdfUrl = document.getElementById('reportFormPdfUrl').value.trim();
+      if (!title || !pdfUrl) return;
+      var body = {
+        year: document.getElementById('reportFormYear').value.trim() || String(new Date().getFullYear()),
+        title: title,
+        description: document.getElementById('reportFormDescription').value.trim(),
+        pdf_url: pdfUrl,
+        sort_order: parseInt(document.getElementById('reportFormSortOrder').value, 10) || 0
+      };
+      try {
+        var url = id ? API + '/admin/annual-reports/' + id : API + '/admin/annual-reports';
+        var res = await fetch(url, { method: id ? 'PUT' : 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Save failed');
+        closeReportModal();
+        loadAnnualReports();
+      } catch (e) { alert('Failed to save'); }
+    }
+    document.getElementById('reportModalSave').addEventListener('click', saveReport);
+
+    async function deleteReport(id) {
+      if (!confirm('Remove this annual report?')) return;
+      try {
+        var res = await fetch(API + '/admin/annual-reports/' + id, { method: 'DELETE', headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Delete failed');
+        loadAnnualReports();
+      } catch (e) { alert('Failed to delete'); }
+    }
+
     async function loadMentorResources() {
       var grid = document.getElementById('mentorsGrid');
       var empty = document.getElementById('mentorsEmpty');
@@ -1104,6 +1298,199 @@
         loadMentorResources();
       } catch (e) { alert('Failed to delete'); }
     }
+
+    var campaignsList = [];
+    var CAMPAIGN_SECTION_LABELS = {
+      scholarship: 'Scholarship',
+      youth: 'Youth & Students',
+      mentorship: 'Mentorship',
+      skills: 'Skills Training',
+      livelihood: 'Livelihood',
+      health: 'Health',
+      education: 'Education'
+    };
+    function campaignSectionLabel(id) {
+      return CAMPAIGN_SECTION_LABELS[id] || 'Education';
+    }
+
+    function closeCampaignModal() {
+      document.getElementById('campaignModal').classList.add('hidden');
+      document.getElementById('campaignModal').setAttribute('aria-hidden', 'true');
+    }
+
+    function openCampaignModal(campaign) {
+      document.getElementById('campaignFormId').value = campaign ? campaign.id : '';
+      document.getElementById('campaignModalTitle').textContent = campaign ? 'Edit campaign' : 'New campaign';
+      document.getElementById('campaignFormTitle').value = campaign ? campaign.title : '';
+      document.getElementById('campaignFormSlug').value = campaign ? campaign.slug : '';
+      document.getElementById('campaignFormShortDesc').value = campaign ? (campaign.short_description || '') : '';
+      document.getElementById('campaignFormStory').value = campaign ? (campaign.full_story || '') : '';
+      document.getElementById('campaignFormCover').value = campaign ? (campaign.cover_image_url || '') : '';
+      document.getElementById('campaignFormCategory').value = campaign ? (campaign.category || 'education') : 'education';
+      document.getElementById('campaignFormLocation').value = campaign ? (campaign.location || '') : '';
+      document.getElementById('campaignFormBeneficiary').value = campaign ? (campaign.beneficiary_label || '') : '';
+      document.getElementById('campaignFormGoal').value = campaign ? (campaign.goal_amount || 50000) : 50000;
+      document.getElementById('campaignFormPresets').value = campaign && campaign.preset_amounts
+        ? campaign.preset_amounts.map(function(p) { return p.amount + (p.label ? '|' + p.label : ''); }).join('\n')
+        : '';
+      document.getElementById('campaignFormUrgent').checked = campaign ? !!campaign.is_urgent : false;
+      document.getElementById('campaignFormFeatured').checked = campaign ? !!campaign.is_featured : false;
+      document.getElementById('campaignProofSection').classList.toggle('hidden', !campaign);
+      document.getElementById('campaignPublishBtn').classList.toggle('hidden', !campaign || campaign.status === 'published');
+      document.getElementById('proofList').innerHTML = campaign && campaign.proofs && campaign.proofs.length
+        ? campaign.proofs.map(function(p) {
+            return '<div style="display:flex; justify-content:space-between; gap:8px; margin-bottom:6px;"><span>' + escapeHtml(p.title) + '</span><button type="button" data-proof-id="' + p.id + '" class="delete-proof" style="border:none;background:none;color:#dc2626;cursor:pointer;">Remove</button></div>';
+          }).join('')
+        : '<span class="muted">No proofs yet.</span>';
+      document.getElementById('proofFormTitle').value = '';
+      document.getElementById('proofFormUrl').value = '';
+      document.getElementById('campaignModal').classList.remove('hidden');
+      document.getElementById('campaignModal').setAttribute('aria-hidden', 'false');
+      initIcons();
+    }
+
+    async function loadCampaigns() {
+      var grid = document.getElementById('campaignsGrid');
+      var empty = document.getElementById('campaignsEmpty');
+      if (!grid || !empty) return;
+      try {
+        var res = await fetch(API + '/admin/campaigns', { headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        var list = res.ok ? await res.json() : [];
+        campaignsList = Array.isArray(list) ? list : [];
+        if (campaignsList.length === 0) {
+          grid.innerHTML = '';
+          empty.classList.remove('hidden');
+        } else {
+          empty.classList.add('hidden');
+          grid.innerHTML = campaignsList.map(function(c) {
+            var statusBadge = c.status === 'published'
+              ? '<span style="color:#16a34a;font-weight:600;">Published</span>'
+              : '<span style="color:#ca8a04;font-weight:600;">Draft</span>';
+            var urgent = c.is_urgent ? ' · <span style="color:#dc2626;">Urgent</span>' : '';
+            return '<div class="resourceCard"><h4 class="resourceCardTitle">' + escapeHtml(c.title) + '</h4>' +
+              '<p class="resourceCardMeta">' + statusBadge + urgent + ' · ' + escapeHtml(campaignSectionLabel(c.category)) + ' · ₹' + (c.raised_amount || 0).toLocaleString() + ' / ₹' + (c.goal_amount || 0).toLocaleString() + '</p>' +
+              '<p class="resourceCardDesc">' + escapeHtml(c.short_description || '') + '</p>' +
+              '<div class="resourceCardActions">' +
+              '<button type="button" data-campaign-id="' + c.id + '" class="edit-campaign">Edit</button>' +
+              (c.status !== 'published' ? '<button type="button" data-publish-id="' + c.id + '" class="publish-campaign" style="color:#2563eb;">Publish</button>' : '') +
+              '<button type="button" data-delete-id="' + c.id + '" class="delete-campaign delete">Delete</button>' +
+              '</div></div>';
+          }).join('');
+          grid.querySelectorAll('.edit-campaign').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var id = parseInt(btn.dataset.campaignId, 10);
+              fetch(API + '/admin/campaigns/' + id, { headers: authHeaders() }).then(function(r) { return r.json(); }).then(openCampaignModal);
+            });
+          });
+          grid.querySelectorAll('.publish-campaign').forEach(function(btn) {
+            btn.addEventListener('click', function() { publishCampaign(parseInt(btn.dataset.publishId, 10)); });
+          });
+          grid.querySelectorAll('.delete-campaign').forEach(function(btn) {
+            btn.addEventListener('click', function() { deleteCampaign(parseInt(btn.dataset.deleteId, 10)); });
+          });
+        }
+      } catch (e) {
+        grid.innerHTML = '';
+        empty.textContent = 'Failed to load campaigns. Run npm run init-db if tables are missing.';
+        empty.classList.remove('hidden');
+      }
+      initIcons();
+    }
+
+    async function saveCampaign() {
+      var id = document.getElementById('campaignFormId').value;
+      var payload = {
+        title: document.getElementById('campaignFormTitle').value.trim(),
+        slug: document.getElementById('campaignFormSlug').value.trim(),
+        short_description: document.getElementById('campaignFormShortDesc').value.trim(),
+        full_story: document.getElementById('campaignFormStory').value.trim(),
+        cover_image_url: document.getElementById('campaignFormCover').value.trim(),
+        category: document.getElementById('campaignFormCategory').value.trim() || 'education',
+        location: document.getElementById('campaignFormLocation').value.trim(),
+        beneficiary_label: document.getElementById('campaignFormBeneficiary').value.trim(),
+        goal_amount_rupees: parseInt(document.getElementById('campaignFormGoal').value, 10) || 50000,
+        preset_amounts: document.getElementById('campaignFormPresets').value,
+        is_urgent: document.getElementById('campaignFormUrgent').checked,
+        is_featured: document.getElementById('campaignFormFeatured').checked
+      };
+      if (!payload.title) { alert('Title is required'); return; }
+      try {
+        var url = id ? API + '/admin/campaigns/' + id : API + '/admin/campaigns';
+        var method = id ? 'PUT' : 'POST';
+        var res = await fetch(url, { method: method, headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()), body: JSON.stringify(payload) });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Save failed');
+        closeCampaignModal();
+        loadCampaigns();
+      } catch (e) { alert('Failed to save campaign'); }
+    }
+
+    async function publishCampaign(id) {
+      if (!confirm('Publish this campaign? It will appear on the donate page.')) return;
+      try {
+        var res = await fetch(API + '/admin/campaigns/' + id + '/publish', { method: 'POST', headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Publish failed');
+        loadCampaigns();
+      } catch (e) { alert('Failed to publish'); }
+    }
+
+    async function deleteCampaign(id) {
+      if (!confirm('Delete this campaign?')) return;
+      try {
+        var res = await fetch(API + '/admin/campaigns/' + id, { method: 'DELETE', headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Delete failed');
+        loadCampaigns();
+      } catch (e) { alert('Failed to delete'); }
+    }
+
+    async function addCampaignProof() {
+      var campaignId = document.getElementById('campaignFormId').value;
+      if (!campaignId) return;
+      var title = document.getElementById('proofFormTitle').value.trim();
+      var media_url = document.getElementById('proofFormUrl').value.trim();
+      if (!title || !media_url) { alert('Proof title and image URL are required'); return; }
+      try {
+        var res = await fetch(API + '/admin/campaigns/' + campaignId + '/proofs', {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+          body: JSON.stringify({ title: title, media_url: media_url, proof_type: 'photo' })
+        });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Add proof failed');
+        var detail = await fetch(API + '/admin/campaigns/' + campaignId, { headers: authHeaders() }).then(function(r) { return r.json(); });
+        openCampaignModal(detail);
+      } catch (e) { alert('Failed to add proof'); }
+    }
+
+    document.getElementById('addCampaignBtn').addEventListener('click', function() { openCampaignModal(null); });
+    document.getElementById('campaignModalClose').addEventListener('click', closeCampaignModal);
+    document.getElementById('campaignModalCancel').addEventListener('click', closeCampaignModal);
+    document.getElementById('campaignModalSave').addEventListener('click', saveCampaign);
+    document.getElementById('campaignPublishBtn').addEventListener('click', function() {
+      var id = document.getElementById('campaignFormId').value;
+      if (id) publishCampaign(parseInt(id, 10));
+    });
+    document.getElementById('addProofBtn').addEventListener('click', addCampaignProof);
+    document.getElementById('campaignModal').addEventListener('click', function(ev) {
+      if (ev.target === this) closeCampaignModal();
+    });
+    document.getElementById('proofList').addEventListener('click', async function(ev) {
+      var btn = ev.target.closest('.delete-proof');
+      if (!btn) return;
+      var proofId = btn.dataset.proofId;
+      var campaignId = document.getElementById('campaignFormId').value;
+      if (!confirm('Remove this proof?')) return;
+      try {
+        var res = await fetch(API + '/admin/campaigns/proofs/' + proofId, { method: 'DELETE', headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Delete failed');
+        var detail = await fetch(API + '/admin/campaigns/' + campaignId, { headers: authHeaders() }).then(function(r) { return r.json(); });
+        openCampaignModal(detail);
+      } catch (e) { alert('Failed to remove proof'); }
+    });
 
     async function loadCourseSignups() {
       var tbody = document.getElementById('coursesignupsBody');

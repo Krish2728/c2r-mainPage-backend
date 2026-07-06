@@ -9,8 +9,10 @@ const {
 } = require("../controllers/adminController");
 const resourceVideoController = require("../controllers/resourceVideoController");
 const careerGuideController = require("../controllers/careerGuideController");
+const annualReportController = require("../controllers/annualReportController");
 const mentorResourceController = require("../controllers/mentorResourceController");
 const courseSignupController = require("../controllers/courseSignupController");
+const campaignController = require("../controllers/campaignController");
 const { authenticateAdmin } = require("../middlewares/auth");
 
 const router = express.Router();
@@ -32,11 +34,25 @@ router.post("/career-guides", authenticateAdmin, careerGuideController.create);
 router.put("/career-guides/:id", authenticateAdmin, careerGuideController.update);
 router.delete("/career-guides/:id", authenticateAdmin, careerGuideController.remove);
 
+router.get("/annual-reports", authenticateAdmin, annualReportController.listAdmin);
+router.post("/annual-reports", authenticateAdmin, annualReportController.create);
+router.put("/annual-reports/:id", authenticateAdmin, annualReportController.update);
+router.delete("/annual-reports/:id", authenticateAdmin, annualReportController.remove);
+
 router.get("/mentor-resources", authenticateAdmin, mentorResourceController.listAdmin);
 router.post("/mentor-resources", authenticateAdmin, mentorResourceController.create);
 router.put("/mentor-resources/:id", authenticateAdmin, mentorResourceController.update);
 router.delete("/mentor-resources/:id", authenticateAdmin, mentorResourceController.remove);
 
 router.get("/course-signups", authenticateAdmin, courseSignupController.listAdmin);
+
+router.get("/campaigns", authenticateAdmin, campaignController.listAdmin);
+router.get("/campaigns/:id", authenticateAdmin, campaignController.getAdminById);
+router.post("/campaigns", authenticateAdmin, campaignController.create);
+router.put("/campaigns/:id", authenticateAdmin, campaignController.update);
+router.post("/campaigns/:id/publish", authenticateAdmin, campaignController.publish);
+router.delete("/campaigns/:id", authenticateAdmin, campaignController.remove);
+router.post("/campaigns/:id/proofs", authenticateAdmin, campaignController.addProof);
+router.delete("/campaigns/proofs/:proofId", authenticateAdmin, campaignController.removeProof);
 
 module.exports = router;
