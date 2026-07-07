@@ -195,6 +195,36 @@ ALTER TABLE donations ADD COLUMN IF NOT EXISTS razorpay_payment_id VARCHAR(255);
 CREATE INDEX IF NOT EXISTS idx_donations_campaign_id ON donations(campaign_id);
 CREATE INDEX IF NOT EXISTS idx_donations_razorpay_order ON donations(razorpay_order_id);
 
+-- Team page (admin-managed)
+CREATE TABLE IF NOT EXISTS team_categories (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  is_additional BOOLEAN NOT NULL DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS team_members (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  role VARCHAR(255) NOT NULL,
+  bio TEXT NOT NULL,
+  linkedin_url VARCHAR(512) DEFAULT '',
+  photo_url VARCHAR(1024),
+  photo_class VARCHAR(255),
+  panel_type VARCHAR(20) NOT NULL DEFAULT 'core',
+  category_id INT REFERENCES team_categories(id) ON DELETE SET NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  status VARCHAR(20) NOT NULL DEFAULT 'published',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT team_members_panel_type_check CHECK (panel_type IN ('core', 'advisory')),
+  CONSTRAINT team_members_status_check CHECK (status IN ('draft', 'published'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_team_categories_sort ON team_categories(sort_order);
+CREATE INDEX IF NOT EXISTS idx_team_members_panel_sort ON team_members(panel_type, category_id, sort_order);
+CREATE INDEX IF NOT EXISTS idx_team_members_status ON team_members(status);
+
 `;
 
 const MAX_RETRIES = 5;
@@ -246,6 +276,13 @@ async function initDb() {
       ['admin@connect2roots.org', hash, 'Admin']
     );
     console.log('✅ Default admin: admin@connect2roots.org / admin123');
+
+    const teamCount = await client.query('SELECT COUNT(*)::int AS n FROM team_members');
+    if (teamCount.rows[0].n === 0) {
+      const { seedTeamData } = require('./seedTeamMembers');
+      await seedTeamData(client);
+      console.log('✅ Team page seeded with default members.');
+    }
   } catch (err) {
     console.error('Init DB error:', err);
     process.exit(1);
