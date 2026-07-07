@@ -1,15 +1,21 @@
 /**
- * Seed team_members + team_categories from constants/teamSeedData.js (idempotent when table empty).
+ * Seed team_members + team_categories from constants/teamSeedData.js
  * Run: npm run seed-team
+ * Force reseed (clears team tables first): npm run seed-team:force
  */
 require("dotenv").config();
 const { pool } = require("../config/db");
 const seed = require("../constants/teamSeedData");
 
-async function seedTeamData(client) {
+async function seedTeamData(client, { force = false } = {}) {
 	const countRes = await client.query("SELECT COUNT(*)::int AS n FROM team_members");
-	if (countRes.rows[0].n > 0) {
+	if (!force && countRes.rows[0].n > 0) {
 		return false;
+	}
+
+	if (force) {
+		await client.query("DELETE FROM team_members");
+		await client.query("DELETE FROM team_categories");
 	}
 
 	const categoryIdByTitle = new Map();
@@ -59,17 +65,19 @@ async function seedTeamData(client) {
 }
 
 async function main() {
+	const force = process.argv.includes("--force");
 	const client = await pool.connect();
 	try {
 		await client.query("BEGIN");
-		const seeded = await seedTeamData(client);
+		const seeded = await seedTeamData(client, { force });
 		await client.query("COMMIT");
 		if (seeded) {
 			console.log(
-				`✅ Seeded ${seed.members.length} team members and ${seed.categories.length} sections.`
+				`✅ Seeded ${seed.members.length} team members and ${seed.categories.length} sections.` +
+					(force ? " (force reseed)" : "")
 			);
 		} else {
-			console.log("Team members already exist — skipping seed.");
+			console.log("Team members already exist — skipping seed. Use: npm run seed-team:force");
 		}
 	} catch (err) {
 		await client.query("ROLLBACK");

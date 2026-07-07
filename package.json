@@ -8,6 +8,7 @@
     "dev": "nodemon index.js",
     "init-db": "node scripts/initDb.js",
     "seed-team": "node scripts/seedTeamMembers.js",
+    "seed-team:force": "node scripts/seedTeamMembers.js --force",
     "add-volunteer-table": "node scripts/addVolunteerTable.js"
   },
   "dependencies": {
