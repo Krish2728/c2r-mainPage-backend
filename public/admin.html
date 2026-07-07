@@ -1791,9 +1791,12 @@
       try {
         var res = await fetch(API + '/admin/team/members/' + id + '/move', { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()), body: JSON.stringify({ direction: direction }) });
         if (res.status === 401) { logout(); return; }
-        if (!res.ok) throw new Error('Move failed');
+        if (!res.ok) {
+          var errBody = await res.json().catch(function() { return {}; });
+          throw new Error(errBody.message || 'Move failed');
+        }
         loadTeamMembersList();
-      } catch (e) { alert('Failed to reorder member'); }
+      } catch (e) { alert('Failed to reorder member: ' + (e.message || '')); }
     }
 
     async function saveTeamCategory() {
@@ -1833,10 +1836,13 @@
       try {
         var res = await fetch(API + '/admin/team/categories/' + id + '/move', { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()), body: JSON.stringify({ direction: direction }) });
         if (res.status === 401) { logout(); return; }
-        if (!res.ok) throw new Error('Move failed');
+        if (!res.ok) {
+          var errBody = await res.json().catch(function() { return {}; });
+          throw new Error(errBody.message || 'Move failed');
+        }
         loadTeamCategoriesList();
         await loadTeamCategoriesCache();
-      } catch (e) { alert('Failed to reorder section'); }
+      } catch (e) { alert('Failed to reorder section: ' + (e.message || '')); }
     }
 
     document.getElementById('addTeamMemberBtn').addEventListener('click', function() { openTeamMemberModal(null); });

@@ -310,15 +310,25 @@ const removeMember = async (req, res) => {
 	}
 };
 
+function memberId(value) {
+	return Number(value);
+}
+
+async function renumberSortOrder(client, table, ids) {
+	for (let i = 0; i < ids.length; i++) {
+		await client.query(`UPDATE ${table} SET sort_order = $1 WHERE id = $2`, [i, ids[i]]);
+	}
+}
+
 const moveMember = async (req, res) => {
 	const client = await pool.connect();
 	try {
-		const { id } = req.params;
+		const id = memberId(req.params.id);
 		const direction = req.body.direction === "down" ? "down" : "up";
 
 		await client.query("BEGIN");
 		const currentRes = await client.query(
-			`SELECT id, panel_type, category_id, sort_order FROM team_members WHERE id = $1 FOR UPDATE`,
+			`SELECT id, panel_type, category_id FROM team_members WHERE id = $1 FOR UPDATE`,
 			[id]
 		);
 		if (!currentRes.rows.length) {
@@ -328,32 +338,28 @@ const moveMember = async (req, res) => {
 		const current = currentRes.rows[0];
 
 		const peersRes = await client.query(
-			`SELECT id, sort_order FROM team_members
+			`SELECT id FROM team_members
        WHERE panel_type = $1 AND (category_id IS NOT DISTINCT FROM $2)
        ORDER BY sort_order ASC, id ASC`,
 			[current.panel_type, current.category_id]
 		);
-		const peers = peersRes.rows;
-		const idx = peers.findIndex((p) => p.id === current.id);
-		const swapIdx = direction === "up" ? idx - 1 : idx + 1;
-		if (swapIdx < 0 || swapIdx >= peers.length) {
-			await client.query("COMMIT");
-			const rows = await fetchMembers("WHERE m.id = $1", [id], client);
-			return res.json(toAdminMember(rows[0]));
+		const ids = peersRes.rows.map((row) => memberId(row.id));
+		const idx = ids.indexOf(memberId(current.id));
+		if (idx < 0) {
+			await client.query("ROLLBACK");
+			return res.status(404).json({ message: "Team member not found in group" });
 		}
 
-		const neighbor = peers[swapIdx];
-		await client.query(`UPDATE team_members SET sort_order = $1 WHERE id = $2`, [
-			neighbor.sort_order,
-			current.id,
-		]);
-		await client.query(`UPDATE team_members SET sort_order = $1 WHERE id = $2`, [
-			current.sort_order,
-			neighbor.id,
-		]);
+		const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+		if (swapIdx >= 0 && swapIdx < ids.length) {
+			[ids[idx], ids[swapIdx]] = [ids[swapIdx], ids[idx]];
+			await renumberSortOrder(client, "team_members", ids);
+		}
+
 		await client.query("COMMIT");
 
 		const rows = await fetchMembers("WHERE m.id = $1", [id]);
+		if (!rows.length) return res.status(404).json({ message: "Team member not found" });
 		res.json(toAdminMember(rows[0]));
 	} catch (err) {
 		try {
@@ -475,50 +481,40 @@ const removeCategory = async (req, res) => {
 const moveCategory = async (req, res) => {
 	const client = await pool.connect();
 	try {
-		const { id } = req.params;
+		const id = memberId(req.params.id);
 		const direction = req.body.direction === "down" ? "down" : "up";
 
 		await client.query("BEGIN");
 		const currentRes = await client.query(
-			`SELECT id, sort_order FROM team_categories WHERE id = $1 FOR UPDATE`,
+			`SELECT id FROM team_categories WHERE id = $1 FOR UPDATE`,
 			[id]
 		);
 		if (!currentRes.rows.length) {
 			await client.query("ROLLBACK");
 			return res.status(404).json({ message: "Section not found" });
 		}
-		const current = currentRes.rows[0];
+
 		const peersRes = await client.query(
-			`SELECT id, sort_order FROM team_categories ORDER BY sort_order ASC, id ASC`
+			`SELECT id FROM team_categories ORDER BY sort_order ASC, id ASC`
 		);
-		const peers = peersRes.rows;
-		const idx = peers.findIndex((p) => p.id === current.id);
-		const swapIdx = direction === "up" ? idx - 1 : idx + 1;
-		if (swapIdx < 0 || swapIdx >= peers.length) {
-			await client.query("COMMIT");
-			const categories = await fetchCategories();
-			const row = categories.find((c) => c.id === current.id);
-			return res.json({
-				id: row.id,
-				title: row.title,
-				sortOrder: row.sort_order,
-				isAdditional: row.is_additional,
-				createdAt: row.created_at,
-			});
+		const ids = peersRes.rows.map((row) => memberId(row.id));
+		const idx = ids.indexOf(id);
+		if (idx < 0) {
+			await client.query("ROLLBACK");
+			return res.status(404).json({ message: "Section not found" });
 		}
-		const neighbor = peers[swapIdx];
-		await client.query(`UPDATE team_categories SET sort_order = $1 WHERE id = $2`, [
-			neighbor.sort_order,
-			current.id,
-		]);
-		await client.query(`UPDATE team_categories SET sort_order = $1 WHERE id = $2`, [
-			current.sort_order,
-			neighbor.id,
-		]);
+
+		const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+		if (swapIdx >= 0 && swapIdx < ids.length) {
+			[ids[idx], ids[swapIdx]] = [ids[swapIdx], ids[idx]];
+			await renumberSortOrder(client, "team_categories", ids);
+		}
+
 		await client.query("COMMIT");
 
 		const categories = await fetchCategories();
-		const row = categories.find((c) => c.id === current.id);
+		const row = categories.find((c) => memberId(c.id) === id);
+		if (!row) return res.status(404).json({ message: "Section not found" });
 		res.json({
 			id: row.id,
 			title: row.title,
