@@ -226,6 +226,7 @@
           <button type="button" data-tab="reports"><i data-lucide="file-down"></i> Annual Reports</button>
           <button type="button" data-tab="mentors"><i data-lucide="file-text"></i> For Mentors</button>
           <button type="button" data-tab="coursesignups"><i data-lucide="graduation-cap"></i> Course Signups</button>
+          <button type="button" data-tab="team"><i data-lucide="users"></i> Team</button>
         </div>
         <div class="tabsDropdown" aria-label="Choose section">
           <select id="tabSelect">
@@ -237,6 +238,7 @@
             <option value="reports">Annual Reports</option>
             <option value="mentors">For Mentors</option>
             <option value="coursesignups">Course Signups</option>
+            <option value="team">Team</option>
           </select>
         </div>
       </div>
@@ -352,6 +354,32 @@
             </table>
           </div>
           <div id="coursesignupsEmpty" class="muted hidden" style="padding:32px; text-align:center;">No signups yet.</div>
+        </div>
+        <div id="teamTab" class="hidden">
+          <div class="resourceToolbar">
+            <div>
+              <h3 style="margin:0;">Our Team page</h3>
+              <p style="margin:6px 0 0 0; color:#64748b; font-size:14px;">Manage core team and advisory panel members on <code>/our-team</code>. Use photo URLs (site path or https).</p>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btnAdd" id="addTeamCategoryBtn" style="background:#475569;"><i data-lucide="folder-plus"></i> New section</button>
+              <button type="button" class="btnAdd" id="addTeamMemberBtn"><i data-lucide="user-plus"></i> New member</button>
+            </div>
+          </div>
+          <div class="mailSubTabsWrap" style="margin-bottom:16px;">
+            <div class="mailSubTabs">
+              <button type="button" class="mailSubTab active" data-team-sub="members">Members</button>
+              <button type="button" class="mailSubTab" data-team-sub="sections">Sections</button>
+            </div>
+          </div>
+          <div id="teamMembersPanel">
+            <div id="teamMembersList"></div>
+            <div id="teamMembersEmpty" class="muted hidden" style="padding:32px; text-align:center;">No team members yet.</div>
+          </div>
+          <div id="teamSectionsPanel" class="hidden">
+            <div id="teamCategoriesList" class="resourceGrid"></div>
+            <div id="teamCategoriesEmpty" class="muted hidden" style="padding:32px; text-align:center;">No advisory sections yet.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -508,6 +536,49 @@
           <button type="button" id="campaignModalCancel" style="padding:10px 18px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-weight:500;">Cancel</button>
           <button type="button" id="campaignPublishBtn" class="btnAdd hidden" style="padding:10px 18px; background:#2563eb;">Publish</button>
           <button type="button" class="btnAdd" id="campaignModalSave" style="padding:10px 18px;">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="teamMemberModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal videoModal" role="dialog" style="max-width: 560px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h2 id="teamMemberModalTitle">Team member</h2>
+        <button type="button" class="modal-close" id="teamMemberModalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="teamMemberFormId" value="" />
+        <div class="form-group"><label class="form-label" for="teamMemberFormName">Name *</label><input type="text" id="teamMemberFormName" class="form-input" /></div>
+        <div class="form-group"><label class="form-label" for="teamMemberFormRole">Title / role *</label><input type="text" id="teamMemberFormRole" class="form-input" placeholder="e.g. Core Team" /></div>
+        <div class="form-group"><label class="form-label" for="teamMemberFormPanel">Panel *</label><select id="teamMemberFormPanel" class="form-input"><option value="core">Core team</option><option value="advisory">Advisory panel</option></select></div>
+        <div class="form-group" id="teamMemberCategoryWrap"><label class="form-label" for="teamMemberFormCategory">Advisory section *</label><select id="teamMemberFormCategory" class="form-input"></select></div>
+        <div class="form-group"><label class="form-label" for="teamMemberFormLinkedin">LinkedIn URL</label><input type="url" id="teamMemberFormLinkedin" class="form-input" placeholder="https://linkedin.com/in/..." /></div>
+        <div class="form-group"><label class="form-label" for="teamMemberFormPhoto">Profile photo URL</label><input type="text" id="teamMemberFormPhoto" class="form-input" placeholder="/C2R Team Photographs/name.jpg or https://..." /></div>
+        <div class="form-group"><label class="form-label" for="teamMemberFormPhotoClass">Photo CSS class (optional)</label><input type="text" id="teamMemberFormPhotoClass" class="form-input" placeholder="e.g. object-[center_32%] scale-110" /></div>
+        <div class="form-group"><label class="form-label" for="teamMemberFormBio">Bio / summary *</label><textarea id="teamMemberFormBio" class="form-input" rows="5" style="resize:vertical;"></textarea></div>
+        <div class="form-group"><label class="form-label" for="teamMemberFormStatus">Status</label><select id="teamMemberFormStatus" class="form-input"><option value="published">Published</option><option value="draft">Draft</option></select></div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px; flex-wrap:wrap;">
+          <button type="button" id="teamMemberModalCancel" style="padding:10px 18px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-weight:500;">Cancel</button>
+          <button type="button" class="btnAdd" id="teamMemberModalSave" style="padding:10px 18px;">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="teamCategoryModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal videoModal" role="dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <h2 id="teamCategoryModalTitle">Advisory section</h2>
+        <button type="button" class="modal-close" id="teamCategoryModalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="teamCategoryFormId" value="" />
+        <div class="form-group"><label class="form-label" for="teamCategoryFormTitle">Section title *</label><input type="text" id="teamCategoryFormTitle" class="form-input" placeholder="e.g. Banking &amp; Financial Services" /></div>
+        <div class="form-group"><label style="display:flex; align-items:center; gap:8px; font-size:14px;"><input type="checkbox" id="teamCategoryFormAdditional" /> Additional advisors bucket (uncategorized list)</label></div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+          <button type="button" id="teamCategoryModalCancel" style="padding:10px 18px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-weight:500;">Cancel</button>
+          <button type="button" class="btnAdd" id="teamCategoryModalSave" style="padding:10px 18px;">Save</button>
         </div>
       </div>
     </div>
@@ -821,6 +892,8 @@
       else if (!document.getElementById('reportModal').classList.contains('hidden')) closeReportModal();
       else if (!document.getElementById('mentorModal').classList.contains('hidden')) closeMentorModal();
       else if (!document.getElementById('campaignModal').classList.contains('hidden')) closeCampaignModal();
+      else if (!document.getElementById('teamMemberModal').classList.contains('hidden')) closeTeamMemberModal();
+      else if (!document.getElementById('teamCategoryModal').classList.contains('hidden')) closeTeamCategoryModal();
     });
     function switchTab(tab) {
       document.querySelectorAll('.tabs button').forEach(b => {
@@ -836,7 +909,9 @@
       document.getElementById('reportsTab').classList.toggle('hidden', tab !== 'reports');
       document.getElementById('mentorsTab').classList.toggle('hidden', tab !== 'mentors');
       document.getElementById('coursesignupsTab').classList.toggle('hidden', tab !== 'coursesignups');
+      document.getElementById('teamTab').classList.toggle('hidden', tab !== 'team');
         if (tab === 'campaigns') loadCampaigns();
+        if (tab === 'team') loadTeamAdmin();
         if (tab === 'videos') loadVideos();
         if (tab === 'careers') loadCareerGuides();
         if (tab === 'reports') loadAnnualReports();
@@ -1494,6 +1569,287 @@
         openCampaignModal(detail);
       } catch (e) { alert('Failed to remove proof'); }
     });
+
+    var teamCategoriesCache = [];
+
+    function switchTeamSub(sub) {
+      document.querySelectorAll('[data-team-sub]').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.teamSub === sub);
+      });
+      document.getElementById('teamMembersPanel').classList.toggle('hidden', sub !== 'members');
+      document.getElementById('teamSectionsPanel').classList.toggle('hidden', sub !== 'sections');
+    }
+    document.querySelectorAll('[data-team-sub]').forEach(function(btn) {
+      btn.addEventListener('click', function() { switchTeamSub(btn.dataset.teamSub); });
+    });
+
+    function teamPanelLabel(panelType, categoryTitle) {
+      if (panelType === 'core') return 'Core team';
+      return categoryTitle || 'Advisory';
+    }
+
+    async function loadTeamCategoriesCache() {
+      var res = await fetch(API + '/admin/team/categories', { headers: authHeaders() });
+      if (res.status === 401) { logout(); return []; }
+      teamCategoriesCache = res.ok ? await res.json() : [];
+      return teamCategoriesCache;
+    }
+
+    function populateTeamCategorySelect(selectedId) {
+      var sel = document.getElementById('teamMemberFormCategory');
+      sel.innerHTML = teamCategoriesCache.map(function(c) {
+        return '<option value="' + c.id + '"' + (String(c.id) === String(selectedId) ? ' selected' : '') + '>' + escapeHtml(c.title) + (c.isAdditional ? ' (additional)' : '') + '</option>';
+      }).join('');
+    }
+
+    function toggleTeamCategoryField() {
+      var panel = document.getElementById('teamMemberFormPanel').value;
+      document.getElementById('teamMemberCategoryWrap').classList.toggle('hidden', panel !== 'advisory');
+    }
+
+    function openTeamMemberModal(member) {
+      document.getElementById('teamMemberModalTitle').textContent = member && member.id ? 'Edit team member' : 'Add team member';
+      document.getElementById('teamMemberFormId').value = member && member.id ? member.id : '';
+      document.getElementById('teamMemberFormName').value = member ? member.name : '';
+      document.getElementById('teamMemberFormRole').value = member ? member.role : '';
+      document.getElementById('teamMemberFormPanel').value = member ? member.panelType : 'core';
+      document.getElementById('teamMemberFormLinkedin').value = member ? (member.linkedinUrl || '') : '';
+      document.getElementById('teamMemberFormPhoto').value = member ? (member.photoUrl || '') : '';
+      document.getElementById('teamMemberFormPhotoClass').value = member ? (member.photoClass || '') : '';
+      document.getElementById('teamMemberFormBio').value = member ? member.bio : '';
+      document.getElementById('teamMemberFormStatus').value = member && member.status === 'draft' ? 'draft' : 'published';
+      populateTeamCategorySelect(member ? member.categoryId : (teamCategoriesCache[0] && teamCategoriesCache[0].id));
+      toggleTeamCategoryField();
+      document.getElementById('teamMemberModal').classList.remove('hidden');
+    }
+    function closeTeamMemberModal() { document.getElementById('teamMemberModal').classList.add('hidden'); }
+
+    function openTeamCategoryModal(cat) {
+      document.getElementById('teamCategoryModalTitle').textContent = cat && cat.id ? 'Edit section' : 'New advisory section';
+      document.getElementById('teamCategoryFormId').value = cat && cat.id ? cat.id : '';
+      document.getElementById('teamCategoryFormTitle').value = cat ? cat.title : '';
+      document.getElementById('teamCategoryFormAdditional').checked = !!(cat && cat.isAdditional);
+      document.getElementById('teamCategoryModal').classList.remove('hidden');
+    }
+    function closeTeamCategoryModal() { document.getElementById('teamCategoryModal').classList.add('hidden'); }
+
+    async function loadTeamMembersList() {
+      var listEl = document.getElementById('teamMembersList');
+      var empty = document.getElementById('teamMembersEmpty');
+      try {
+        var res = await fetch(API + '/admin/team/members', { headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (res.status === 503) {
+          listEl.innerHTML = '';
+          empty.textContent = 'Run npm run init-db on the server to create team tables.';
+          empty.classList.remove('hidden');
+          return;
+        }
+        var members = res.ok ? await res.json() : [];
+        if (!members.length) {
+          listEl.innerHTML = '';
+          empty.classList.remove('hidden');
+          return;
+        }
+        empty.classList.add('hidden');
+        var groups = {};
+        members.forEach(function(m) {
+          var key = m.panelType === 'core' ? 'core' : ('cat:' + (m.categoryId || 'none'));
+          if (!groups[key]) groups[key] = { label: teamPanelLabel(m.panelType, m.categoryTitle), items: [] };
+          groups[key].items.push(m);
+        });
+        listEl.innerHTML = Object.keys(groups).map(function(key) {
+          var group = groups[key];
+          var cards = group.items.map(function(m) {
+            var status = m.status === 'published' ? '<span style="color:#16a34a;">Published</span>' : '<span style="color:#ca8a04;">Draft</span>';
+            return '<div class="resourceCard"><h4 class="resourceCardTitle">' + escapeHtml(m.name) + '</h4>' +
+              '<p class="resourceCardMeta">' + status + ' · ' + escapeHtml(m.role) + '</p>' +
+              '<div class="resourceCardActions">' +
+              '<button type="button" class="team-move-up" data-id="' + m.id + '">↑</button>' +
+              '<button type="button" class="team-move-down" data-id="' + m.id + '">↓</button>' +
+              '<button type="button" class="edit-team-member" data-id="' + m.id + '">Edit</button>' +
+              '<button type="button" class="delete-team-member delete" data-id="' + m.id + '">Delete</button>' +
+              '</div></div>';
+          }).join('');
+          return '<div style="margin-bottom:20px;"><h4 style="margin:0 0 10px 0; font-size:15px; color:#334155;">' + escapeHtml(group.label) + '</h4><div class="resourceGrid">' + cards + '</div></div>';
+        }).join('');
+
+        listEl.querySelectorAll('.edit-team-member').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var id = parseInt(btn.dataset.id, 10);
+            var member = members.find(function(m) { return m.id === id; });
+            if (member) openTeamMemberModal(member);
+          });
+        });
+        listEl.querySelectorAll('.delete-team-member').forEach(function(btn) {
+          btn.addEventListener('click', function() { deleteTeamMember(parseInt(btn.dataset.id, 10)); });
+        });
+        listEl.querySelectorAll('.team-move-up').forEach(function(btn) {
+          btn.addEventListener('click', function() { moveTeamMember(parseInt(btn.dataset.id, 10), 'up'); });
+        });
+        listEl.querySelectorAll('.team-move-down').forEach(function(btn) {
+          btn.addEventListener('click', function() { moveTeamMember(parseInt(btn.dataset.id, 10), 'down'); });
+        });
+      } catch (e) {
+        listEl.innerHTML = '';
+        empty.textContent = 'Failed to load team members.';
+        empty.classList.remove('hidden');
+      }
+      initIcons();
+    }
+
+    async function loadTeamCategoriesList() {
+      var grid = document.getElementById('teamCategoriesList');
+      var empty = document.getElementById('teamCategoriesEmpty');
+      try {
+        await loadTeamCategoriesCache();
+        if (!teamCategoriesCache.length) {
+          grid.innerHTML = '';
+          empty.classList.remove('hidden');
+          return;
+        }
+        empty.classList.add('hidden');
+        grid.innerHTML = teamCategoriesCache.map(function(c) {
+          return '<div class="resourceCard"><h4 class="resourceCardTitle">' + escapeHtml(c.title) + '</h4>' +
+            '<p class="resourceCardMeta">' + (c.isAdditional ? 'Additional advisors' : 'Advisory section') + ' · Order: ' + c.sortOrder + '</p>' +
+            '<div class="resourceCardActions">' +
+            '<button type="button" class="team-cat-up" data-id="' + c.id + '">↑</button>' +
+            '<button type="button" class="team-cat-down" data-id="' + c.id + '">↓</button>' +
+            '<button type="button" class="edit-team-category" data-id="' + c.id + '">Edit</button>' +
+            '<button type="button" class="delete-team-category delete" data-id="' + c.id + '">Delete</button>' +
+            '</div></div>';
+        }).join('');
+        grid.querySelectorAll('.edit-team-category').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var id = parseInt(btn.dataset.id, 10);
+            var cat = teamCategoriesCache.find(function(c) { return c.id === id; });
+            if (cat) openTeamCategoryModal(cat);
+          });
+        });
+        grid.querySelectorAll('.delete-team-category').forEach(function(btn) {
+          btn.addEventListener('click', function() { deleteTeamCategory(parseInt(btn.dataset.id, 10)); });
+        });
+        grid.querySelectorAll('.team-cat-up').forEach(function(btn) {
+          btn.addEventListener('click', function() { moveTeamCategory(parseInt(btn.dataset.id, 10), 'up'); });
+        });
+        grid.querySelectorAll('.team-cat-down').forEach(function(btn) {
+          btn.addEventListener('click', function() { moveTeamCategory(parseInt(btn.dataset.id, 10), 'down'); });
+        });
+      } catch (e) {
+        grid.innerHTML = '';
+        empty.textContent = 'Failed to load sections.';
+        empty.classList.remove('hidden');
+      }
+      initIcons();
+    }
+
+    async function loadTeamAdmin() {
+      await loadTeamCategoriesCache();
+      await loadTeamMembersList();
+      await loadTeamCategoriesList();
+    }
+
+    async function saveTeamMember() {
+      var id = document.getElementById('teamMemberFormId').value;
+      var panelType = document.getElementById('teamMemberFormPanel').value;
+      var payload = {
+        name: document.getElementById('teamMemberFormName').value.trim(),
+        role: document.getElementById('teamMemberFormRole').value.trim(),
+        bio: document.getElementById('teamMemberFormBio').value.trim(),
+        linkedinUrl: document.getElementById('teamMemberFormLinkedin').value.trim(),
+        photoUrl: document.getElementById('teamMemberFormPhoto').value.trim(),
+        photoClass: document.getElementById('teamMemberFormPhotoClass').value.trim(),
+        panelType: panelType,
+        categoryId: panelType === 'advisory' ? parseInt(document.getElementById('teamMemberFormCategory').value, 10) : null,
+        status: document.getElementById('teamMemberFormStatus').value
+      };
+      if (!payload.name || !payload.role || !payload.bio) { alert('Name, title, and bio are required'); return; }
+      try {
+        var url = id ? API + '/admin/team/members/' + id : API + '/admin/team/members';
+        var res = await fetch(url, { method: id ? 'PUT' : 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()), body: JSON.stringify(payload) });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) {
+          var err = await res.json().catch(function() { return {}; });
+          throw new Error(err.message || 'Save failed');
+        }
+        closeTeamMemberModal();
+        loadTeamAdmin();
+      } catch (e) { alert('Failed to save: ' + (e.message || '')); }
+    }
+
+    async function deleteTeamMember(id) {
+      if (!confirm('Delete this team member?')) return;
+      try {
+        var res = await fetch(API + '/admin/team/members/' + id, { method: 'DELETE', headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Delete failed');
+        loadTeamAdmin();
+      } catch (e) { alert('Failed to delete member'); }
+    }
+
+    async function moveTeamMember(id, direction) {
+      try {
+        var res = await fetch(API + '/admin/team/members/' + id + '/move', { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()), body: JSON.stringify({ direction: direction }) });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Move failed');
+        loadTeamMembersList();
+      } catch (e) { alert('Failed to reorder member'); }
+    }
+
+    async function saveTeamCategory() {
+      var id = document.getElementById('teamCategoryFormId').value;
+      var payload = {
+        title: document.getElementById('teamCategoryFormTitle').value.trim(),
+        isAdditional: document.getElementById('teamCategoryFormAdditional').checked
+      };
+      if (!payload.title) { alert('Section title is required'); return; }
+      try {
+        var url = id ? API + '/admin/team/categories/' + id : API + '/admin/team/categories';
+        var res = await fetch(url, { method: id ? 'PUT' : 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()), body: JSON.stringify(payload) });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) {
+          var err = await res.json().catch(function() { return {}; });
+          throw new Error(err.message || 'Save failed');
+        }
+        closeTeamCategoryModal();
+        loadTeamAdmin();
+      } catch (e) { alert('Failed to save section: ' + (e.message || '')); }
+    }
+
+    async function deleteTeamCategory(id) {
+      if (!confirm('Delete this section?')) return;
+      try {
+        var res = await fetch(API + '/admin/team/categories/' + id, { method: 'DELETE', headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) {
+          var err = await res.json().catch(function() { return {}; });
+          throw new Error(err.message || 'Delete failed');
+        }
+        loadTeamAdmin();
+      } catch (e) { alert('Failed to delete: ' + (e.message || '')); }
+    }
+
+    async function moveTeamCategory(id, direction) {
+      try {
+        var res = await fetch(API + '/admin/team/categories/' + id + '/move', { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()), body: JSON.stringify({ direction: direction }) });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error('Move failed');
+        loadTeamCategoriesList();
+        await loadTeamCategoriesCache();
+      } catch (e) { alert('Failed to reorder section'); }
+    }
+
+    document.getElementById('addTeamMemberBtn').addEventListener('click', function() { openTeamMemberModal(null); });
+    document.getElementById('addTeamCategoryBtn').addEventListener('click', function() { openTeamCategoryModal(null); });
+    document.getElementById('teamMemberFormPanel').addEventListener('change', toggleTeamCategoryField);
+    document.getElementById('teamMemberModalClose').addEventListener('click', closeTeamMemberModal);
+    document.getElementById('teamMemberModalCancel').addEventListener('click', closeTeamMemberModal);
+    document.getElementById('teamMemberModalSave').addEventListener('click', saveTeamMember);
+    document.getElementById('teamMemberModal').addEventListener('click', function(ev) { if (ev.target === this) closeTeamMemberModal(); });
+    document.getElementById('teamCategoryModalClose').addEventListener('click', closeTeamCategoryModal);
+    document.getElementById('teamCategoryModalCancel').addEventListener('click', closeTeamCategoryModal);
+    document.getElementById('teamCategoryModalSave').addEventListener('click', saveTeamCategory);
+    document.getElementById('teamCategoryModal').addEventListener('click', function(ev) { if (ev.target === this) closeTeamCategoryModal(); });
 
     async function loadCourseSignups() {
       var tbody = document.getElementById('coursesignupsBody');
