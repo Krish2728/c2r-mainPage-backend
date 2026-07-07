@@ -13,6 +13,7 @@ const annualReportController = require("../controllers/annualReportController");
 const mentorResourceController = require("../controllers/mentorResourceController");
 const courseSignupController = require("../controllers/courseSignupController");
 const campaignController = require("../controllers/campaignController");
+const teamController = require("../controllers/teamController");
 const { authenticateAdmin } = require("../middlewares/auth");
 
 const router = express.Router();
@@ -54,5 +55,17 @@ router.post("/campaigns/:id/publish", authenticateAdmin, campaignController.publ
 router.delete("/campaigns/:id", authenticateAdmin, campaignController.remove);
 router.post("/campaigns/:id/proofs", authenticateAdmin, campaignController.addProof);
 router.delete("/campaigns/proofs/:proofId", authenticateAdmin, campaignController.removeProof);
+
+router.get("/team/members", authenticateAdmin, teamController.listAdminMembers);
+router.post("/team/members", authenticateAdmin, teamController.createMember);
+router.put("/team/members/:id", authenticateAdmin, teamController.updateMember);
+router.delete("/team/members/:id", authenticateAdmin, teamController.removeMember);
+router.post("/team/members/:id/move", authenticateAdmin, teamController.moveMember);
+
+router.get("/team/categories", authenticateAdmin, teamController.listAdminCategories);
+router.post("/team/categories", authenticateAdmin, teamController.createCategory);
+router.put("/team/categories/:id", authenticateAdmin, teamController.updateCategory);
+router.delete("/team/categories/:id", authenticateAdmin, teamController.removeCategory);
+router.post("/team/categories/:id/move", authenticateAdmin, teamController.moveCategory);
 
 module.exports = router;
