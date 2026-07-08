@@ -9,7 +9,9 @@
     "init-db": "node scripts/initDb.js",
     "seed-team": "node scripts/seedTeamMembers.js",
     "seed-team:force": "node scripts/seedTeamMembers.js --force",
-    "add-volunteer-table": "node scripts/addVolunteerTable.js"
+    "add-volunteer-table": "node scripts/addVolunteerTable.js",
+    "build-admin": "npm --prefix admin-ui run build",
+    "dev-admin": "npm --prefix admin-ui run dev"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

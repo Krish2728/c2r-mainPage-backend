@@ -30,7 +30,7 @@ pool
 			console.log(`🚀 c2r-admin-backend running on http://localhost:${PORT}`);
 			console.log(`   API: /api/contact, /api/partnership, /api/volunteer, /api/mentor-application, /api/donations, /api/campaigns`);
 			console.log(`   Admin: POST /api/admin/login, GET /api/admin/emails, GET /api/admin/volunteers, GET /api/admin/donations`);
-			console.log(`   → Open http://localhost:${PORT}/admin.html for the admin dashboard`);
+			console.log(`   → Open http://localhost:${PORT}/admin-portal/ for the admin dashboard`);
 		});
 	})
 	.catch((err) => {

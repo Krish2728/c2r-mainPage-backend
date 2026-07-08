@@ -12,7 +12,7 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: npm install
+    buildCommand: npm install && npm --prefix admin-ui install && npm run build-admin
     startCommand: npm run init-db && node index.js
     envVars:
       - key: NODE_ENV
